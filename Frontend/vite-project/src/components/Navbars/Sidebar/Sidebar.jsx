@@ -124,7 +124,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             <ul className="nav-group-items list-unstyled ps-4 mt-1">
                                 <li className="nav-item mb-1">
                                     <Link
-                                        to="/managers"
+                                        to="/view-staff"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/managers"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
@@ -137,7 +137,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                 </li>
                                 <li className="nav-item mb-1">
                                     <Link
-                                        to="/staff/create"
+                                        to="/create-staff"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/staff/create"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
@@ -145,33 +145,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                         onClick={() => isMobile && handleToggle()}
                                     >
                                         <i className="bi bi-person-plus me-2"></i>
-                                        Create Manager
-                                    </Link>
-                                </li>
-                                <li className="nav-item mb-1">
-                                    <Link
-                                        to="/staff/create"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/staff/create"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
-                                            }`}
-                                        onClick={() => isMobile && handleToggle()}
-                                    >
-                                        <i className="bi bi-person-plus me-2"></i>
-                                        Create Receptionist
-                                    </Link>
-                                </li>
-                                <li className="nav-item mb-1">
-                                    <Link
-                                        to="/staff/create"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/staff/create"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
-                                            }`}
-                                        onClick={() => isMobile && handleToggle()}
-                                    >
-                                        <i className="bi bi-person-plus me-2"></i>
-                                        Create HouseKeeper
+                                        Create Staff
                                     </Link>
                                 </li>
                             </ul>

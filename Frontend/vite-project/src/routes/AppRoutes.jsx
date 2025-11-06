@@ -2,10 +2,12 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Auth/Login";
 import RegisterGuest from "../pages/Auth/Register";
-import CreateStaff from "../pages/Auth/CreateStaff";
+import CreateStaff from "../pages/Dashboard/CreateStaff";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
 import AdminDashboard from "../pages/Dashboard/AdminDashboard"; // ✅ import
+import ViewStaff from "../pages/Dashboard/ViewStaff";
+import Guests from "../pages/Dashboard/Guests";
 // import other pages later (Bookings, Staff, etc.)
 
 const AppRoutes = () => (
@@ -38,6 +40,16 @@ const AppRoutes = () => (
           </ProtectedRoute>
         }
       />
+      <Route path="view-staff" element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <ViewStaff />
+          </ProtectedRoute>
+        } />
+      <Route path="guests" element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <Guests />
+          </ProtectedRoute>
+        } />
     </Route>
 
     {/* Optional: Catch-All Route */}
