@@ -5,10 +5,11 @@ import RegisterGuest from "../pages/Auth/Register";
 import CreateStaff from "../pages/Dashboard/CreateStaff";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../components/Layouts/DashboardLayout";
-import AdminDashboard from "../pages/Dashboard/AdminDashboard"; // ✅ import
+import AdminDashboard from "../pages/Dashboard/AdminDashboard";
 import ViewStaff from "../pages/Dashboard/ViewStaff";
 import Guests from "../pages/Dashboard/Guests";
-// import other pages later (Bookings, Staff, etc.)
+import RoomList from "../pages/Rooms/RoomList";
+import AddRoom from "../pages/Rooms/AddRoom";
 
 const AppRoutes = () => (
   <Routes>
@@ -48,6 +49,16 @@ const AppRoutes = () => (
       <Route path="guests" element={
           <ProtectedRoute roles={["admin", "manager"]}>
             <Guests />
+          </ProtectedRoute>
+        } />
+      <Route path="rooms" element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <RoomList />
+          </ProtectedRoute>
+        } />
+      <Route path="addRoom" element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <AddRoom />
           </ProtectedRoute>
         } />
     </Route>

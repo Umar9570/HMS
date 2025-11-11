@@ -125,7 +125,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                 <li className="nav-item mb-1">
                                     <Link
                                         to="/view-staff"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/managers"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/view-staff"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
                                             }`}
@@ -138,7 +138,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                 <li className="nav-item mb-1">
                                     <Link
                                         to="/create-staff"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/staff/create"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/create-staff"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
                                             }`}
@@ -184,15 +184,15 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                 </li>
                                 <li className="nav-item mb-1">
                                     <Link
-                                        to="/rooms/categories"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/rooms/categories"
+                                        to="/addRoom"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/addRoom"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
                                         <i className="bi bi-grid me-2"></i>
-                                        Room Categories
+                                        Add Room
                                     </Link>
                                 </li>
                             </ul>
@@ -329,6 +329,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-size: 15px;
           font-weight: 500;
+          border-radius: 7px !important;
         }
         .nav-link i{
           color: #1099a8ff;
