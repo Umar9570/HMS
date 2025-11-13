@@ -1,166 +1,152 @@
 import React, { useState } from "react";
-import { Card, Badge, Button } from "react-bootstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 
-const CleaningReq = () => {
-  // Dummy complaint data
-  const [complaints, setComplaints] = useState([
+const CleaningRequests = () => {
+  // Dummy data for now
+  const [requests, setRequests] = useState([
     {
       _id: "1",
-      name: "John Doe",
-      role: "guest",
-      phone: "+91 9876543210",
-      complaintType: "Room Service",
-      priority: "high",
-      message: "Room service was delayed by more than an hour.",
+      roomNumber: "101",
+      issue: "Guest requested cleaning after checkout.",
+      reportedBy: "Emma Wilson",
       status: "pending",
-      date: "2025-11-10",
+      assignedTo: "John (Housekeeper)",
+      createdAt: "2025-11-12T09:30:00Z",
     },
     {
       _id: "2",
-      name: "Emma Wilson",
-      role: "staff",
-      phone: "+91 9012345678",
-      complaintType: "Equipment",
-      priority: "medium",
-      message: "The housekeeping trolley’s wheel is broken.",
+      roomNumber: "203",
+      issue: "Spilled food on carpet, urgent clean needed.",
+      reportedBy: "Liam Smith",
       status: "in-progress",
-      date: "2025-11-09",
+      assignedTo: "Anna (Housekeeper)",
+      createdAt: "2025-11-11T14:45:00Z",
     },
     {
       _id: "3",
-      name: "Liam Smith",
-      role: "guest",
-      phone: "+91 9823456789",
-      complaintType: "Cleanliness",
-      priority: "low",
-      message: "The corridor outside Room 305 was not cleaned properly.",
-      status: "resolved",
-      date: "2025-11-07",
-    },
-    {
-      _id: "4",
-      name: "Sophia Brown",
-      role: "staff",
-      phone: "+91 9123456780",
-      complaintType: "Technical Issue",
-      priority: "high",
-      message: "The AC unit in the reception is malfunctioning.",
-      status: "pending",
-      date: "2025-11-11",
+      roomNumber: "305",
+      issue: "Routine daily cleaning.",
+      reportedBy: "System (Auto)",
+      status: "cleaned",
+      assignedTo: "Michael (Housekeeper)",
+      createdAt: "2025-11-10T08:00:00Z",
     },
   ]);
 
-  // Status badge colors
+  // Handle status updates
+  const handleStart = (id) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r._id === id ? { ...r, status: "in-progress" } : r
+      )
+    );
+  };
+
+  const handleComplete = (id) => {
+    setRequests((prev) =>
+      prev.map((r) =>
+        r._id === id ? { ...r, status: "cleaned" } : r
+      )
+    );
+  };
+
+  // Badge color mapping
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
         return "warning";
       case "in-progress":
-        return "info";
-      case "resolved":
+        return "primary";
+      case "cleaned":
         return "success";
       default:
         return "secondary";
     }
   };
 
-  // Priority badge colors
-  const getPriorityBadge = (priority) => {
-    switch (priority) {
-      case "high":
-        return "danger";
-      case "medium":
-        return "primary";
-      case "low":
-        return "secondary";
-      default:
-        return "light";
-    }
-  };
-
-  // Mock handler to mark as resolved
-  const handleResolve = (id) => {
-    setComplaints((prev) =>
-      prev.map((c) =>
-        c._id === id ? { ...c, status: "resolved" } : c
-      )
-    );
-  };
-
   return (
     <div className="p-4">
       {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-        <h4 className="fw-semibold text-secondary mb-0">All Complaints</h4>
+        <h4 className="fw-semibold text-secondary mb-0">Cleaning Requests</h4>
+        <Button variant="primary" className="d-flex align-items-center">
+          <i className="bi bi-arrow-clockwise me-2"></i>Refresh
+        </Button>
       </div>
 
-      {/* Complaint Cards */}
+      {/* Cards Grid */}
       <div className="row g-4">
-        {complaints.map((c) => (
-          <div key={c._id} className="col-12 col-md-6 col-lg-4">
-            <Card className="shadow-sm border-0 h-100 complaint-card">
+        {requests.map((req) => (
+          <div key={req._id} className="col-12 col-md-6 col-lg-4">
+            <Card className="shadow-sm border-0 h-100">
               <Card.Body className="d-flex flex-column">
                 {/* Header */}
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <div>
-                    <h6 className="fw-semibold mb-1 text-dark">{c.name}</h6>
-                    <p className="text-muted small mb-0 text-capitalize">
-                      {c.role} — {c.phone}
+                    <h6 className="fw-semibold mb-1 text-dark">
+                      Room {req.roomNumber}
+                    </h6>
+                    <p className="text-muted small mb-0">
+                      Reported by: {req.reportedBy}
                     </p>
                   </div>
-                  <Badge bg={getPriorityBadge(c.priority)} className="text-capitalize px-3 py-2">
-                    {c.priority} Priority
-                  </Badge>
-                </div>
-
-                {/* Complaint Type */}
-                <p className="small text-secondary mb-2">
-                  <i className="bi bi-exclamation-triangle me-2 text-danger"></i>
-                  <strong>Type:</strong> {c.complaintType}
-                </p>
-
-                {/* Date */}
-                <p className="small text-secondary mb-2">
-                  <i className="bi bi-calendar-event me-2"></i>
-                  <strong>Date:</strong>{" "}
-                  {new Date(c.date).toLocaleDateString()}
-                </p>
-
-                {/* Status */}
-                <div className="mb-3">
                   <Badge
-                    bg={getStatusBadge(c.status)}
-                    className="px-3 py-2 text-capitalize"
+                    bg={getStatusBadge(req.status)}
+                    className="text-capitalize px-2 py-1"
                   >
-                    {c.status}
+                    {req.status}
                   </Badge>
                 </div>
 
-                {/* Complaint Message */}
-                <Card.Text className="text-secondary small flex-grow-1">
-                  <i className="bi bi-chat-dots text-primary me-2"></i>
-                  {c.message}
-                </Card.Text>
+                {/* Issue */}
+                <p className="text-secondary small mb-2">
+                  <i className="bi bi-info-circle me-2"></i>
+                  {req.issue}
+                </p>
+
+                {/* Created Date */}
+                <p className="text-muted small mb-3">
+                  <i className="bi bi-calendar-event me-2"></i>
+                  Requested on:{" "}
+                  {new Date(req.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
 
                 {/* Action Buttons */}
-                <div className="mt-auto pt-2">
-                  {c.status !== "resolved" ? (
+                <div className="mt-auto d-flex justify-content-between">
+                  {req.status === "pending" && (
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="w-100"
+                      onClick={() => handleStart(req._id)}
+                    >
+                      <i className="bi bi-play-circle me-1"></i>Start Cleaning
+                    </Button>
+                  )}
+
+                  {req.status === "in-progress" && (
                     <Button
                       variant="success"
                       size="sm"
                       className="w-100"
-                      onClick={() => handleResolve(c._id)}
+                      onClick={() => handleComplete(req._id)}
                     >
-                      <i className="bi bi-check-circle me-1"></i>Mark as Resolved
+                      <i className="bi bi-check-circle me-1"></i>Mark Cleaned
                     </Button>
-                  ) : (
+                  )}
+
+                  {req.status === "cleaned" && (
                     <Button
                       variant="outline-secondary"
                       size="sm"
                       className="w-100"
                       disabled
                     >
-                      <i className="bi bi-patch-check me-1"></i>Resolved
+                      <i className="bi bi-check2-all me-1"></i>Completed
                     </Button>
                   )}
                 </div>
@@ -172,11 +158,11 @@ const CleaningReq = () => {
 
       {/* Inline Styles */}
       <style>{`
-        .complaint-card {
+        .card {
           border-radius: 14px;
           transition: all 0.25s ease;
         }
-        .complaint-card:hover {
+        .card:hover {
           transform: translateY(-4px);
           box-shadow: 0 4px 14px rgba(0,0,0,0.08);
         }
@@ -184,14 +170,14 @@ const CleaningReq = () => {
           font-size: 12px;
         }
         .btn {
-          border-radius: 8px;
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: 8px;
         }
         .btn:hover {
           transform: translateY(-2px);
         }
         @media (max-width: 576px) {
-          .complaint-card {
+          .card {
             border-radius: 10px;
           }
         }
@@ -200,4 +186,4 @@ const CleaningReq = () => {
   );
 };
 
-export default CleaningReq;
+export default CleaningRequests;

@@ -8,8 +8,7 @@ const cleaningRequestSchema = new Schema({
     type: String,
     enum: ['pending', 'in-progress', 'cleaned'],
     default: 'pending'
-  },
-  assignedTo: { type: Schema.Types.ObjectId, ref: 'User' }
+  }
 }, { timestamps: true });
 
 const CleaningRequestModel = mongoose.model('CleaningRequest', cleaningRequestSchema);

@@ -15,6 +15,7 @@ import AddBooking from "../pages/Bookings/AddBooking";
 import FeedbackList from "../pages/Feedback/FeedbackList";
 import ComplaintList from "../pages/Complaint/ComplaintList";
 import CleaningReq from "../pages/Cleaning/CleaningRequests";
+import RequestCleaning from "../pages/Cleaning/RequestCleaning";
 
 const AppRoutes = () => (
   <Routes>
@@ -89,6 +90,11 @@ const AppRoutes = () => (
       <Route path="cleaning-requests" element={
           <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
             <CleaningReq />
+          </ProtectedRoute>
+        } />
+      <Route path="request-cleaning" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
+            <RequestCleaning />
           </ProtectedRoute>
         } />
     </Route>

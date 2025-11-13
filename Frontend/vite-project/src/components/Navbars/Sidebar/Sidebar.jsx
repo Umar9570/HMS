@@ -64,8 +64,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         <Link
                             to="/dashboard"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/dashboard"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -78,8 +78,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         <Link
                             to="/bookings"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/bookings"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -94,8 +94,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         <Link
                             to="/add-booking"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/add-booking"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -108,8 +108,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         <Link
                             to="/guests"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/guests"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -139,8 +139,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/view-staff"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/view-staff"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
@@ -152,8 +152,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/create-staff"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/create-staff"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
@@ -186,8 +186,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/rooms"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/rooms"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
@@ -199,8 +199,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/add-room"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/add-room"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
@@ -211,26 +211,60 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             </ul>
                         </Collapse>
                     </li>
-
-                    <li className="nav-item mb-1">
-                        <Link
-                            to="/cleaning-requests"
-                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/cleaning-requests"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
-                                }`}
-                            onClick={() => isMobile && handleToggle()}
+                    <li className="nav-item nav-group mb-1">
+                        <button
+                            className="nav-link nav-group-toggle d-flex align-items-center w-100 text-start border-0 bg-transparent px-3 py-2 text-secondary"
+                            onClick={() => toggleDropdown("cleaning")}
+                            aria-expanded={openDropdown === "cleaning"}
                         >
-                            <i className="bi bi-trash me-2 nav-icon"></i>
-                            Cleaning Requests
-                        </Link>
+                            <i className="bi bi-trash3 me-2 nav-icon"></i>
+                            House Keeping
+                            <Badge bg="primary" className="ms-auto">
+                                NEW
+                            </Badge>
+                            <i
+                                className={`bi ms-auto ${openDropdown === "cleaning" ? "bi-chevron-up" : "bi-chevron-down"
+                                    }`}
+                            ></i>
+                        </button>
+
+                        <Collapse in={openDropdown === "cleaning"}>
+                            <ul className="nav-group-items list-unstyled ps-4 mt-1">
+                                <li className="nav-item mb-1">
+                                    <Link
+                                        to="/cleaning-requests"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/cleaning-requests"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
+                                            }`}
+                                        onClick={() => isMobile && handleToggle()}
+                                    >
+                                        <i className="bi bi-trash3-fill me-2 nav-icon"></i>
+                                        Cleaning Requests
+                                    </Link>
+                                </li>
+                                <li className="nav-item mb-1">
+                                    <Link
+                                        to="/request-cleaning"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/request-cleaning"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
+                                            }`}
+                                        onClick={() => isMobile && handleToggle()}
+                                    >
+                                        <i className="bi bi-patch-plus me-2"></i>
+                                        Request Cleaning
+                                    </Link>
+                                </li>
+                            </ul>
+                        </Collapse>
                     </li>
                     <li className="nav-item mb-1">
                         <Link
                             to="/feedbacks"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/feedbacks"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -242,8 +276,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         <Link
                             to="/complaints"
                             className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/complaints"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
                                 }`}
                             onClick={() => isMobile && handleToggle()}
                         >
@@ -251,48 +285,7 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             Complaints
                         </Link>
                     </li>
-                    {/* === INVENTORY & FINANCE === */}
-                    <li className="nav-item mb-1">
-                        <Link
-                            to="/inventory"
-                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/inventory"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
-                                }`}
-                            onClick={() => isMobile && handleToggle()}
-                        >
-                            <i className="bi bi-box-seam me-2 nav-icon"></i>
-                            Inventory
-                        </Link>
-                    </li>
-
-                    <li className="nav-item mb-1">
-                        <Link
-                            to="/finance"
-                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/finance"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
-                                }`}
-                            onClick={() => isMobile && handleToggle()}
-                        >
-                            <i className="bi bi-cash-stack me-2 nav-icon"></i>
-                            Finance
-                        </Link>
-                    </li>
-
-                    <li className="nav-item mb-1">
-                        <Link
-                            to="/reports"
-                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/reports"
-                                    ? "active-link bg-light fw-semibold"
-                                    : "text-secondary"
-                                }`}
-                            onClick={() => isMobile && handleToggle()}
-                        >
-                            <i className="bi bi-graph-up me-2 nav-icon"></i>
-                            Reports
-                        </Link>
-                    </li>
+                    
 
                     {/* === SETTINGS & SYSTEM === */}
                     <li className="nav-item nav-group mb-1">
@@ -305,8 +298,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             Settings
                             <i
                                 className={`bi ms-auto ${openDropdown === "settings"
-                                        ? "bi-chevron-up"
-                                        : "bi-chevron-down"
+                                    ? "bi-chevron-up"
+                                    : "bi-chevron-down"
                                     }`}
                             ></i>
                         </button>
@@ -317,8 +310,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/profile-settings"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/profile-settings"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
@@ -330,8 +323,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                     <Link
                                         to="/system-settings"
                                         className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/system-settings"
-                                                ? "active-link bg-light fw-semibold"
-                                                : "text-secondary"
+                                            ? "active-link bg-light fw-semibold"
+                                            : "text-secondary"
                                             }`}
                                         onClick={() => isMobile && handleToggle()}
                                     >
