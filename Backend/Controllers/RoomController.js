@@ -1,6 +1,6 @@
 const Room = require('../models/RoomSchema');
 const Booking = require('../models/BookingSchema');
-const MaintenanceRequest = require('../models/MaintenanceRequestSchema');
+const MaintenanceRequest = require('../models/CleaningRequestSchema');
 const HousekeepingTaskModel = require('../models/HouseKeepingSchema');
 
 // ------------------- ADD ROOM -------------------

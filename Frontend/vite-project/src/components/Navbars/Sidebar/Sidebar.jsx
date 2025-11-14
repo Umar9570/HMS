@@ -90,6 +90,19 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             </Badge>
                         </Link>
                     </li>
+                    <li className="nav-item mb-1">
+                        <Link
+                            to="/add-booking"
+                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/add-booking"
+                                    ? "active-link bg-light fw-semibold"
+                                    : "text-secondary"
+                                }`}
+                            onClick={() => isMobile && handleToggle()}
+                        >
+                            <i className="bi bi-calendar-plus me-2 nav-icon"></i>
+                            Add Booking
+                        </Link>
+                    </li>
 
                     <li className="nav-item mb-1">
                         <Link
@@ -184,8 +197,8 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                                 </li>
                                 <li className="nav-item mb-1">
                                     <Link
-                                        to="/addRoom"
-                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/addRoom"
+                                        to="/add-room"
+                                        className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/add-room"
                                                 ? "active-link bg-light fw-semibold"
                                                 : "text-secondary"
                                             }`}
@@ -199,6 +212,45 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                         </Collapse>
                     </li>
 
+                    <li className="nav-item mb-1">
+                        <Link
+                            to="/cleaning-requests"
+                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/cleaning-requests"
+                                    ? "active-link bg-light fw-semibold"
+                                    : "text-secondary"
+                                }`}
+                            onClick={() => isMobile && handleToggle()}
+                        >
+                            <i className="bi bi-trash me-2 nav-icon"></i>
+                            Cleaning Requests
+                        </Link>
+                    </li>
+                    <li className="nav-item mb-1">
+                        <Link
+                            to="/feedbacks"
+                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/feedbacks"
+                                    ? "active-link bg-light fw-semibold"
+                                    : "text-secondary"
+                                }`}
+                            onClick={() => isMobile && handleToggle()}
+                        >
+                            <i className="bi bi-chat-square-text me-2 nav-icon"></i>
+                            Feedbacks
+                        </Link>
+                    </li>
+                    <li className="nav-item mb-1">
+                        <Link
+                            to="/complaints"
+                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/complaints"
+                                    ? "active-link bg-light fw-semibold"
+                                    : "text-secondary"
+                                }`}
+                            onClick={() => isMobile && handleToggle()}
+                        >
+                            <i className="bi bi-exclamation-square me-2 nav-icon"></i>
+                            Complaints
+                        </Link>
+                    </li>
                     {/* === INVENTORY & FINANCE === */}
                     <li className="nav-item mb-1">
                         <Link
@@ -326,9 +378,10 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
             {/* Inline Styles */}
             <style>{`
         .nav-link {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
           font-size: 15px;
           font-weight: 500;
+          background-color: #dfdfdf36 !important;
           border-radius: 7px !important;
         }
         .nav-link i{

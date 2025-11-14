@@ -61,24 +61,6 @@ const Topbar = ({ toggleSidebar, user }) => {
           </a>
         </div>
 
-        {/* CENTER: Search Bar */}
-        <form
-          className="d-none d-md-flex mx-auto flex-grow-1 justify-content-center"
-          style={{ maxWidth: "40%" }}
-        >
-          <input
-            className="form-control form-control-sm rounded-pill px-3"
-            type="search"
-            placeholder="Search..."
-            aria-label="Search"
-            style={{
-              backgroundColor: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              fontSize: "14px",
-            }}
-          />
-        </form>
-
         {/* RIGHT SIDE: Notifications + Profile */}
         <ul
           className="navbar-nav ms-auto align-items-center flex-row flex-nowrap gap-3"
@@ -217,6 +199,7 @@ const Topbar = ({ toggleSidebar, user }) => {
 
         /* Dropdown animation (fade + slide) */
         .dropdown-animated {
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
           display: block; /* keep in DOM so we can animate */
           opacity: 0;
           transform: translateY(-8px);

@@ -10,6 +10,11 @@ import ViewStaff from "../pages/Dashboard/ViewStaff";
 import Guests from "../pages/Dashboard/Guests";
 import RoomList from "../pages/Rooms/RoomList";
 import AddRoom from "../pages/Rooms/AddRoom";
+import BookingList from "../pages/Bookings/BookingList";
+import AddBooking from "../pages/Bookings/AddBooking";
+import FeedbackList from "../pages/Feedback/FeedbackList";
+import ComplaintList from "../pages/Complaint/ComplaintList";
+import CleaningReq from "../pages/Cleaning/CleaningRequests";
 
 const AppRoutes = () => (
   <Routes>
@@ -56,9 +61,34 @@ const AppRoutes = () => (
             <RoomList />
           </ProtectedRoute>
         } />
-      <Route path="addRoom" element={
+      <Route path="add-room" element={
           <ProtectedRoute roles={["admin", "manager"]}>
             <AddRoom />
+          </ProtectedRoute>
+        } />
+      <Route path="bookings" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+            <BookingList />
+          </ProtectedRoute>
+        } />
+      <Route path="add-booking" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+            <AddBooking />
+          </ProtectedRoute>
+        } />
+      <Route path="feedbacks" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+            <FeedbackList />
+          </ProtectedRoute>
+        } />
+      <Route path="complaints" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+            <ComplaintList />
+          </ProtectedRoute>
+        } />
+      <Route path="cleaning-requests" element={
+          <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
+            <CleaningReq />
           </ProtectedRoute>
         } />
     </Route>

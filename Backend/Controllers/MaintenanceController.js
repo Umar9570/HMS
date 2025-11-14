@@ -1,4 +1,4 @@
-const MaintenanceRequest = require('../models/MaintenanceRequestSchema');
+const MaintenanceRequest = require('../models/CleaningRequestSchema');
 const Room = require('../models/RoomSchema');
 
 // ------------------- REPORT ISSUE -------------------
