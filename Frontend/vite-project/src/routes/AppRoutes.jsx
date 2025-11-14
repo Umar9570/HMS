@@ -16,12 +16,23 @@ import FeedbackList from "../pages/Feedback/FeedbackList";
 import ComplaintList from "../pages/Complaint/ComplaintList";
 import CleaningReq from "../pages/Cleaning/CleaningRequests";
 import RequestCleaning from "../pages/Cleaning/RequestCleaning";
+import Index from "../pages/ClientSide/Index";
+import Booknow from "../pages/ClientSide/BookNow";
+import Rooms from "../pages/ClientSide/Rooms";
+import About from "../pages/ClientSide/About";
+import Contact from "../pages/ClientSide/Contact";
 
 const AppRoutes = () => (
   <Routes>
     {/* ---------------- Public Routes ---------------- */}
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<RegisterGuest />} />
+    <Route path="/" element={<Index />} />
+    <Route path="/home" element={<Index />} />
+    <Route path="booknow" element={<Booknow />} />
+    <Route path="room-categories" element={<Rooms />} />
+    <Route path="about" element={<About />} />
+    <Route path="contact" element={<Contact />} />
 
     {/* ---------------- Protected Dashboard Routes ---------------- */}
     <Route
@@ -32,8 +43,6 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     >
-      {/* ✅ Default Dashboard Page */}
-      <Route index element={<AdminDashboard />} />
 
       {/* ✅ You can also make /dashboard explicitly available */}
       <Route path="dashboard" element={<AdminDashboard />} />
