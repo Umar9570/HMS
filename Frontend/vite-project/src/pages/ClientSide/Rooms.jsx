@@ -7,25 +7,25 @@ const Rooms = () => {
         {
             title: "Single Room",
             image:
-                "https://images.unsplash.com/photo-1590490359854-dfba19688d70",
+                "https://media.istockphoto.com/id/496859731/photo/modern-twin-room-interior.jpg?s=612x612&w=0&k=20&c=ZYrOwKJbbm-15fq0kxpCwlO0Lvg_OQhOyctsWgfonWw=",
             desc: "A cozy and budget-friendly room ideal for solo travelers, offering comfort, privacy, and all essential amenities.",
         },
         {
             title: "Double Room",
             image:
-                "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+                "https://photos.hotelbeds.com/giata/original/15/157118/157118a_hb_ro_034.jpg",
             desc: "Perfect for couples or friends, this spacious room features elegant interiors and modern facilities.",
         },
         {
             title: "Deluxe Room",
             image:
-                "https://images.unsplash.com/photo-1560448071-5bfde27d0c49",
+                "https://www.glenmarie.com.my/wp-content/uploads/2024/02/Deluxe-Suite-3.jpg",
             desc: "A blend of luxury and comfort with premium furnishings and additional amenities for a relaxing stay.",
         },
         {
             title: "Suite",
             image:
-                "https://images.unsplash.com/photo-1671213989270-8d894f12c90b",
+                "https://images.prismic.io/luxdeco-dev/NjlmZDU5ZDctYmFlOS00YTgyLWJiMTUtM2ZkMDQ2MzgwYTQ0_1552563901_palace-suite-kempinski-emirates-palace-the-most-expensive-hotels-rooms-around-the-world-luxdeco-style-guide.jpg?auto=compress,format&w=1200&q=100",
             desc: "Experience top-tier luxury with our ultra-spacious suite, designed for guests who prefer high-end living.",
         },
     ];
@@ -37,7 +37,7 @@ const Rooms = () => {
             <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold text-primary fs-4" href="#">
-                        <i className="bi bi-building me-2"></i>RoyalStay Hotel
+                        <i className="bi bi-building me-2"></i>LuxuryStay Hotel
                     </a>
 
                     <button
@@ -118,12 +118,9 @@ const Rooms = () => {
                                     <div className="card-body d-flex flex-column">
                                         <h5 className="fw-bold">{room.title}</h5>
                                         <p className="text-secondary small flex-grow-1">{room.desc}</p>
-                                        <a
-                                            href="/client/booknow"
-                                            className="btn btn-outline-primary w-100 mt-2"
-                                        >
+                                        <Link to={'/booknow'} className="btn btn-outline-primary w-100 mt-2">
                                             Book Now
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -136,12 +133,12 @@ const Rooms = () => {
             {/* ================= FOOTER ================= */}
             <footer className="bg-dark text-white py-4 mt-5">
                 <div className="container text-center">
-                    <h5 className="fw-bold mb-3">RoyalStay Hotel</h5>
-                    <p className="mb-1">123 Luxury Street, New Delhi, India</p>
-                    <p className="mb-1">Phone: +91 98765 43210</p>
-                    <p>Email: contact@royalstay.com</p>
+                    <h5 className="fw-bold mb-3">LuxuryStay Hotel</h5>
+                    <p className="mb-1">123 Luxury Street, NewYork, USA</p>
+                    <p className="mb-1">Phone: 03123456789</p>
+                    <p>Email: contact@luxurystay.com</p>
                     <p className="mt-3 small text-white-50">
-                        © {new Date().getFullYear()} RoyalStay Hotel. All rights reserved.
+                        © {new Date().getFullYear()} LuxuryStay Hotel. All rights reserved.
                     </p>
                 </div>
             </footer>
@@ -184,7 +181,7 @@ const Rooms = () => {
 
         .room-hero {
           height: 45vh;
-          background: url('https://images.unsplash.com/photo-1501117716987-c8e1ecb210d1')
+          background: url('https://media.architecturaldigest.com/photos/659d9cb42446c7171718ecf0/master/w_1600%2Cc_limit/atr.royalmansion-bedroom2-mr.jpg')
             center/cover no-repeat;
           position: relative;
         }

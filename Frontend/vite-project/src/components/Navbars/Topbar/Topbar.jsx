@@ -69,7 +69,7 @@ const Topbar = ({ toggleSidebar, user }) => {
           {/* Notifications */}
           <li className="nav-item dropdown position-relative" ref={notifRef}>
             <button
-              className="btn btn-link nav-link text-dark position-relative p-0"
+              className="btn btn-link nav-link text-dark position-relative p-1"
               onClick={() => {
                 setShowNotifications(!showNotifications);
                 setShowProfileMenu(false);
@@ -132,7 +132,7 @@ const Topbar = ({ toggleSidebar, user }) => {
           {/* Profile Dropdown */}
           <li className="nav-item dropdown position-relative" ref={profileRef}>
             <button
-              className="btn btn-link nav-link d-flex align-items-center text-dark p-0"
+              className="btn btn-link nav-link d-flex align-items-center text-dark p-1"
               onClick={() => {
                 setShowProfileMenu(!showProfileMenu);
                 setShowNotifications(false);

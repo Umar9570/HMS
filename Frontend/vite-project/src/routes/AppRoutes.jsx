@@ -38,16 +38,22 @@ const AppRoutes = () => (
     <Route
       path="/"
       element={
-        <ProtectedRoute>
+        <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
           <DashboardLayout />
         </ProtectedRoute>
       }
     >
 
-      {/* ✅ You can also make /dashboard explicitly available */}
-      <Route path="dashboard" element={<AdminDashboard />} />
 
-      {/* ✅ Other Protected Routes */}
+      {/* Protected Routes */}
+      <Route
+        path="dashboard"
+        element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="create-staff"
         element={

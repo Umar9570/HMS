@@ -10,7 +10,7 @@ const About = () => {
             <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold text-primary fs-4" href="/client">
-                        <i className="bi bi-building me-2"></i>RoyalStay Hotel
+                        <i className="bi bi-building me-2"></i>LuxuryStay Hotel
                     </a>
 
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
@@ -57,7 +57,7 @@ const About = () => {
             {/* ================= HERO SECTION ================= */}
             <section className="about-hero d-flex align-items-center text-white">
                 <div className="container text-center">
-                    <h1 className="fw-bold display-5">About RoyalStay</h1>
+                    <h1 className="fw-bold display-5">About LuxuryStay</h1>
                     <p className="mt-3 fs-5 text-white-50">
                         Comfort • Luxury • Exceptional Service
                     </p>
@@ -71,23 +71,23 @@ const About = () => {
 
                         <div className="col-lg-6 mb-4">
                             <img
-                                src="https://images.unsplash.com/photo-1502673530728-f79b4cab31b1"
+                                src="https://media.datahc.com/HI602463019.jpg"
                                 className="img-fluid rounded"
                                 alt="Hotel"
                             />
                         </div>
 
                         <div className="col-lg-6">
-                            <h2 className="fw-bold text-primary mb-3">Welcome to RoyalStay Hotel</h2>
+                            <h2 className="fw-bold text-primary mb-3">Welcome to LuxuryStay Hotel</h2>
                             <p className="text-secondary">
-                                RoyalStay Hotel offers premium hospitality with modern luxury, comfort,
+                                LuxuryStay Hotel offers premium hospitality with modern luxury, comfort,
                                 and world-class service. Our mission is to provide a peaceful and elegant
                                 environment where guests can relax, enjoy, and experience unforgettable
                                 stays.
                             </p>
                             <p className="text-secondary">
                                 From beautifully designed rooms to exceptional in-house services, every
-                                corner of RoyalStay reflects sophistication and warmth. Whether you're a
+                                corner of LuxuryStay reflects sophistication and warmth. Whether you're a
                                 business traveler, a family on vacation, or a guest seeking comfort,
                                 we ensure your stay is nothing short of perfect.
                             </p>
@@ -98,14 +98,14 @@ const About = () => {
             </section>
 
             {/* ================= FOOTER ================= */}
-            <footer className="bg-dark text-white py-4">
+            <footer className="bg-dark text-white py-4 mt-5">
                 <div className="container text-center">
-                    <h5 className="fw-bold mb-3">RoyalStay Hotel</h5>
-                    <p className="mb-1">123 Luxury Street, New Delhi, India</p>
-                    <p className="mb-1">Phone: +91 98765 43210</p>
-                    <p>Email: contact@royalstay.com</p>
+                    <h5 className="fw-bold mb-3">LuxuryStay Hotel</h5>
+                    <p className="mb-1">123 Luxury Street, NewYork, USA</p>
+                    <p className="mb-1">Phone: 03123456789</p>
+                    <p>Email: contact@luxurystay.com</p>
                     <p className="mt-3 small text-white-50">
-                        © {new Date().getFullYear()} RoyalStay Hotel. All rights reserved.
+                        © {new Date().getFullYear()} LuxuryStay Hotel. All rights reserved.
                     </p>
                 </div>
             </footer>

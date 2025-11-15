@@ -10,7 +10,7 @@ const Contact = () => {
             <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold text-primary fs-4" href="/client">
-                        <i className="bi bi-building me-2"></i>RoyalStay Hotel
+                        <i className="bi bi-building me-2"></i>LuxuryStay Hotel
                     </a>
 
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#clientNavbar">
@@ -103,18 +103,17 @@ const Contact = () => {
             </section>
 
             {/* ================= FOOTER ================= */}
-            <footer className="bg-dark text-white py-4">
+            <footer className="bg-dark text-white py-4 mt-5">
                 <div className="container text-center">
-                    <h5 className="fw-bold mb-3">RoyalStay Hotel</h5>
-                    <p className="mb-1">123 Luxury Street, New Delhi, India</p>
-                    <p className="mb-1">Phone: +91 98765 43210</p>
-                    <p>Email: contact@royalstay.com</p>
+                    <h5 className="fw-bold mb-3">LuxuryStay Hotel</h5>
+                    <p className="mb-1">123 Luxury Street, NewYork, USA</p>
+                    <p className="mb-1">Phone: 03123456789</p>
+                    <p>Email: contact@luxurystay.com</p>
                     <p className="mt-3 small text-white-50">
-                        © {new Date().getFullYear()} RoyalStay Hotel. All rights reserved.
+                        © {new Date().getFullYear()} LuxuryStay Hotel. All rights reserved.
                     </p>
                 </div>
             </footer>
-
             {/* ================= INTERNAL CSS ================= */}
             <style>{`
         .text-primary{

@@ -10,7 +10,7 @@ const Index = () => {
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div className="container">
           <a className="navbar-brand fw-bold text-primary fs-4" href="#">
-            <i className="bi bi-building me-2"></i>RoyalStay Hotel
+            <i className="bi bi-building me-2"></i>LuxuryStay Hotel
           </a>
 
           <button
@@ -65,15 +65,15 @@ const Index = () => {
         <div className="container h-100 d-flex align-items-center">
           <div className="text-white col-md-7">
             <h1 className="display-4 fw-bold mb-3">
-              Experience Luxury & Comfort With RoyalStay
+              Experience Luxury & Comfort With LuxuryStay
             </h1>
             <p className="fs-5 mb-4">
               Book your perfect stay with modern rooms, world-class service,
               and a peaceful environment—all at unbeatable prices.
             </p>
-            <a href="#" className="btn btn-lg btn-light text-primary fw-semibold px-4">
+            <Link to={'/room-categories'} className="btn btn-lg btn-primary fw-semibold px-4">
               Explore Rooms
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -85,9 +85,9 @@ const Index = () => {
             
             {/* LEFT TEXT */}
             <div className="col-lg-6 mb-4">
-              <h2 className="fw-bold text-primary mb-3">Welcome to RoyalStay</h2>
+              <h2 className="fw-bold text-primary mb-3">Welcome to LuxuryStay</h2>
               <p className="text-secondary fs-5">
-                At RoyalStay, we combine elegance with comfort to provide
+                At LuxuryStay, we combine elegance with comfort to provide
                 guests a memorable experience. Whether you're here for business,
                 leisure, or a relaxing getaway, our rooms and amenities are
                 designed to cater to your every need.
@@ -97,15 +97,15 @@ const Index = () => {
                 delicious dining options, and friendly staff ready to make your
                 stay perfect.
               </p>
-              <a href="#" className="btn btn-primary px-4 fw-semibold mt-2">
+              <Link to={'/about'} className="btn btn-primary px-4 fw-semibold mt-2">
                 Learn More
-              </a>
+              </Link>
             </div>
 
             {/* RIGHT IMAGE */}
             <div className="col-lg-6">
               <img
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+                src="https://dynamic-media-cdn.tripadvisor.com/media/photo-o/29/ce/5c/0d/indura-beach-golf-resort.jpg?w=1200&h=-1&s=1"
                 alt="Hotel"
                 className="img-fluid rounded shadow"
               />
@@ -126,7 +126,7 @@ const Index = () => {
             <div className="col-md-4">
               <div className="card border-0 shadow-sm h-100 room-card">
                 <img
-                  src="https://images.unsplash.com/photo-1590490359854-dfba19688d70"
+                  src="https://media.istockphoto.com/id/496859731/photo/modern-twin-room-interior.jpg?s=612x612&w=0&k=20&c=ZYrOwKJbbm-15fq0kxpCwlO0Lvg_OQhOyctsWgfonWw="
                   className="card-img-top"
                   alt="Single Room"
                 />
@@ -135,9 +135,9 @@ const Index = () => {
                   <p className="text-secondary small">
                     A cozy and comfortable room designed for solo travelers.
                   </p>
-                  <a href="#" className="btn btn-outline-primary w-100">
+                  <Link to={'/room-categories'} className="btn btn-outline-primary w-100">
                     View Details
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@ const Index = () => {
             <div className="col-md-4">
               <div className="card border-0 shadow-sm h-100 room-card">
                 <img
-                  src="https://images.unsplash.com/photo-1560448071-5bfde27d0c49"
+                  src="https://www.glenmarie.com.my/wp-content/uploads/2024/02/Deluxe-Suite-3.jpg"
                   className="card-img-top"
                   alt="Deluxe Room"
                 />
@@ -154,9 +154,9 @@ const Index = () => {
                   <p className="text-secondary small">
                     Spacious room with premium interiors and great ambiance.
                   </p>
-                  <a href="#" className="btn btn-outline-primary w-100">
+                  <Link to={'/room-categories'} className="btn btn-outline-primary w-100">
                     View Details
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -164,7 +164,7 @@ const Index = () => {
             <div className="col-md-4">
               <div className="card border-0 shadow-sm h-100 room-card">
                 <img
-                  src="https://images.unsplash.com/photo-1671213989270-8d894f12c90b"
+                  src="https://images.prismic.io/luxdeco-dev/NjlmZDU5ZDctYmFlOS00YTgyLWJiMTUtM2ZkMDQ2MzgwYTQ0_1552563901_palace-suite-kempinski-emirates-palace-the-most-expensive-hotels-rooms-around-the-world-luxdeco-style-guide.jpg?auto=compress,format&w=1200&q=100"
                   className="card-img-top"
                   alt="Suite"
                 />
@@ -173,9 +173,9 @@ const Index = () => {
                   <p className="text-secondary small">
                     A premium stay experience with luxury and comfort.
                   </p>
-                  <a href="#" className="btn btn-outline-primary w-100">
+                  <Link to={'/room-categories'} className="btn btn-outline-primary w-100">
                     View Details
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -187,12 +187,12 @@ const Index = () => {
       {/* ================= FOOTER ================= */}
       <footer className="bg-dark text-white py-4 mt-5">
         <div className="container text-center">
-          <h5 className="fw-bold mb-3">RoyalStay Hotel</h5>
-          <p className="mb-1">123 Luxury Street, New Delhi, India</p>
-          <p className="mb-1">Phone: +91 98765 43210</p>
-          <p>Email: contact@royalstay.com</p>
+          <h5 className="fw-bold mb-3">LuxuryStay Hotel</h5>
+          <p className="mb-1">123 Luxury Street, NewYork, USA</p>
+          <p className="mb-1">Phone: 03123456789</p>
+          <p>Email: contact@luxurystay.com</p>
           <p className="mt-3 small text-white-50">
-            © {new Date().getFullYear()} RoyalStay Hotel. All rights reserved.
+            © {new Date().getFullYear()} LuxuryStay Hotel. All rights reserved.
           </p>
         </div>
       </footer>
@@ -200,15 +200,21 @@ const Index = () => {
       {/* ================= INTERNAL PAGE CSS ================= */}
       <style>{`
         .hero {
-          background: url('https://images.unsplash.com/photo-1501117716987-c8e1ecb210d1') center/cover no-repeat;
+          background: url('https://assets.insuremytrip.com/wp-content/uploads/2021/11/02144544/most_affordable_5_star_hotels_us.jpg') center/cover no-repeat;
           height: 75vh;
           position: relative;
         }
 
-        .hero-overlay {
+        .hero::before {
+          content: "";
           position: absolute;
           inset: 0;
           background: rgba(0, 0, 0, 0.55);
+        }
+
+        .hero .container {
+          position: relative;
+          z-index: 2;
         }
 
         .text-primary{
@@ -222,6 +228,7 @@ const Index = () => {
 
         .btn-primary:hover{
           background-color: #0d7480ff !important;
+          border-color: #0d7480ff !important;
         }
 
         .btn-outline-primary{

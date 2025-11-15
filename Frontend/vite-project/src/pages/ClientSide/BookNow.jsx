@@ -68,13 +68,13 @@ const Booknow = () => {
     };
 
     return (
-        <div className="client-booking">
+        <div className="client-booking bg-light">
 
             {/* ================= NAVBAR ================= */}
             <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
                 <div className="container">
                     <a className="navbar-brand fw-bold text-primary fs-4" href="#">
-                        <i className="bi bi-building me-2"></i>RoyalStay Hotel
+                        <i className="bi bi-building me-2"></i>LuxuryStay Hotel
                     </a>
 
                     <button
@@ -124,11 +124,11 @@ const Booknow = () => {
             </nav>
 
             {/* ================= BOOKING FORM HEADER ================= */}
-            <section className="py-5 bg-light text-center">
+            <section className="py-5 text-center">
                 <div className="container">
                     <h1 className="fw-bold text-primary">Book Your Stay</h1>
                     <p className="text-secondary mt-2">
-                        Fill out the form below to reserve your perfect room at RoyalStay.
+                        Fill out the form below to reserve your perfect room at LuxuryStay.
                     </p>
                 </div>
             </section>
@@ -295,12 +295,12 @@ const Booknow = () => {
             {/* ================= FOOTER ================= */}
             <footer className="bg-dark text-white py-4 mt-5">
                 <div className="container text-center">
-                    <h5 className="fw-bold mb-3">RoyalStay Hotel</h5>
-                    <p className="mb-1">123 Luxury Street, New Delhi, India</p>
-                    <p className="mb-1">Phone: +91 98765 43210</p>
-                    <p>Email: contact@royalstay.com</p>
+                    <h5 className="fw-bold mb-3">LuxuryStay Hotel</h5>
+                    <p className="mb-1">123 Luxury Street, NewYork, USA</p>
+                    <p className="mb-1">Phone: 03123456789</p>
+                    <p>Email: contact@luxurystay.com</p>
                     <p className="mt-3 small text-white-50">
-                        © {new Date().getFullYear()} RoyalStay Hotel. All rights reserved.
+                        © {new Date().getFullYear()} LuxuryStay Hotel. All rights reserved.
                     </p>
                 </div>
             </footer>
