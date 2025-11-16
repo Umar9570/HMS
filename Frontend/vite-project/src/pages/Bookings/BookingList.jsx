@@ -1,79 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Button, Badge } from "react-bootstrap";
+import api from "../../api/axios"; // Make sure this points to your axios instance
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const BookingList = () => {
-  // Dummy booking data
-  const [bookings, setBookings] = useState([
-    {
-      _id: "1",
-      guestName: "John Doe",
-      phoneNumber: "+91 9876543210",
-      roomNumber: "101",
-      checkInDate: "2025-11-10",
-      checkOutDate: "2025-11-14",
-      numberOfGuests: 2,
-      totalPrice: 4800,
-      status: "reserved",
-      paymentStatus: "pending",
-    },
-    {
-      _id: "2",
-      guestName: "Emma Wilson",
-      phoneNumber: "+91 9123456789",
-      roomNumber: "203",
-      checkInDate: "2025-11-09",
-      checkOutDate: "2025-11-15",
-      numberOfGuests: 3,
-      totalPrice: 7200,
-      status: "checked-in",
-      paymentStatus: "paid",
-    },
-    {
-      _id: "3",
-      guestName: "Liam Smith",
-      phoneNumber: "+91 9988776655",
-      roomNumber: "305",
-      checkInDate: "2025-11-12",
-      checkOutDate: "2025-11-13",
-      numberOfGuests: 1,
-      totalPrice: 2000,
-      status: "cancelled",
-      paymentStatus: "refunded",
-    },
-    {
-      _id: "4",
-      guestName: "Sophia Brown",
-      phoneNumber: "+91 9090909090",
-      roomNumber: "402",
-      checkInDate: "2025-11-14",
-      checkOutDate: "2025-11-16",
-      numberOfGuests: 2,
-      totalPrice: 4000,
-      status: "checked-out",
-      paymentStatus: "paid",
-    },
-  ]);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Handle confirm and cancel actions (mock)
-  const handleConfirm = (id) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b._id === id ? { ...b, status: "checked-in", paymentStatus: "paid" } : b
-      )
-    );
+  // Fetch bookings from backend
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const { data } = await api.get("/bookings"); // GET all bookings
+        setBookings(data || []); 
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        toast.error("Failed to fetch bookings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, []);
+
+  // Handle confirm (check-in)
+  const handleConfirm = async (id) => {
+    try {
+      const { data } = await api.put(`/bookings/checkin/${id}`);
+      if (data.booking) {
+        setBookings((prev) =>
+          prev.map((b) =>
+            b._id === id
+              ? { ...b, status: "checked-in", paymentStatus: "paid" }
+              : b
+          )
+        );
+        toast.success("Guest checked in successfully");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error during check-in");
+    }
   };
 
-  const handleCancel = (id) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b._id === id
-          ? { ...b, status: "cancelled", paymentStatus: "refunded" }
-          : b
-      )
-    );
+  // Handle cancel
+  const handleCancel = async (id) => {
+    try {
+      const { data } = await api.put(`/bookings/cancel/${id}`);
+      if (data.booking) {
+        setBookings((prev) =>
+          prev.map((b) =>
+            b._id === id
+              ? { ...b, status: "cancelled", paymentStatus: "refunded" }
+              : b
+          )
+        );
+        toast.success("Booking cancelled successfully");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error cancelling booking");
+    }
   };
 
-  // Badge colors for booking status
+  // Badge colors
   const getStatusBadge = (status) => {
     switch (status) {
       case "reserved":
@@ -89,7 +81,6 @@ const BookingList = () => {
     }
   };
 
-  // Badge colors for payment status
   const getPaymentBadge = (status) => {
     switch (status) {
       case "paid":
@@ -103,17 +94,24 @@ const BookingList = () => {
     }
   };
 
+  if (loading) {
+    return <p className="text-center mt-5">Loading bookings...</p>;
+  }
+
   return (
     <div className="p-4">
       {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <h4 className="fw-semibold text-secondary mb-0">All Bookings</h4>
-        <Button variant="primary" className="d-flex align-items-center">
+        <Link to={'/add-booking'} className="btn btn-primary d-flex align-items-center">
           <i className="bi bi-plus-lg me-2"></i>Add New Booking
-        </Button>
+        </Link>
       </div>
 
       {/* Cards Grid */}
+      {bookings<1  ? (
+          <h5 className="text-secondary text-center mt-5 fs-small">No Bookings</h5>
+      ) : (
       <div className="row g-4">
         {bookings.map((booking) => (
           <div key={booking._id} className="col-12 col-md-6 col-lg-4">
@@ -123,14 +121,16 @@ const BookingList = () => {
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <div>
                     <h6 className="fw-semibold mb-1 text-dark">
-                      {booking.guestName}
+                      {booking.guestId
+                        ? `${booking.guestId.firstName} ${booking.guestId.lastName}`
+                        : booking.guestName}
                     </h6>
                     <p className="text-muted small mb-0">
-                      Room No: {booking.roomNumber}
+                      Room No: {booking.roomId ? booking.roomId.roomNumber : booking.roomNumber}
                     </p>
                     <p className="text-muted small mb-0">
                       <i className="bi bi-telephone me-1"></i>
-                      {booking.phoneNumber}
+                      {booking.guestId?.phone || booking.phoneNumber || "-"}
                     </p>
                   </div>
                   <Badge
@@ -159,7 +159,7 @@ const BookingList = () => {
                   </li>
                   <li>
                     <i className="bi bi-cash-stack me-2"></i>
-                    <strong>Total:</strong> ₹{booking.totalPrice.toLocaleString()}
+                    <strong>Total:</strong> ${booking.totalPrice.toLocaleString()}
                   </li>
                 </ul>
 
@@ -212,6 +212,7 @@ const BookingList = () => {
           </div>
         ))}
       </div>
+      )}
 
       {/* Inline Styles */}
       <style>{`

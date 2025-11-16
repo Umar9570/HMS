@@ -6,7 +6,7 @@ const authController = {
   // ------------------- GUEST SELF-REGISTRATION -------------------
   registerGuest: async (req, res) => {
     try {
-      const { firstName, lastName, username, email, password, phone, preferences } = req.body;
+      const { firstName, lastName, email, password, phone, preferences } = req.body;
 
       // Check for existing email
       const existingUser = await UserModel.findOne({ email });
@@ -21,7 +21,6 @@ const authController = {
       const newUser = await UserModel.create({
         firstName,
         lastName,
-        username,
         email,
         password: hashpass,
         phone,
@@ -33,7 +32,6 @@ const authController = {
         message: "Guest account registered successfully",
         user: {
           id: newUser._id,
-          username: newUser.username,
           email: newUser.email,
           role: newUser.role,
         },
@@ -48,7 +46,7 @@ const authController = {
   // ------------------- STAFF CREATION (ADMIN/MANAGER ONLY) -------------------
   createStaff: async (req, res) => {
     try {
-      const { firstName, lastName, username, email, password, phone, role, preferences } = req.body;
+      const { firstName, lastName, email, password, phone, role, preferences } = req.body;
 
       // Allowed staff roles
       const allowedRoles = ['admin', 'manager', 'receptionist', 'housekeeping'];
@@ -69,7 +67,6 @@ const authController = {
       const newUser = await UserModel.create({
         firstName,
         lastName,
-        username,
         email,
         password: hashpass,
         phone,
@@ -81,7 +78,6 @@ const authController = {
         message: `Staff account (${role}) created successfully`,
         user: {
           id: newUser._id,
-          username: newUser.username,
           email: newUser.email,
           role: newUser.role
         },
@@ -116,10 +112,12 @@ const authController = {
         message: "Login successful",
         user: {
           id: existingUser._id,
-          username: existingUser.username,
           email: existingUser.email,
           role: existingUser.role,
-          status: existingUser.status
+          status: existingUser.status,
+          firstName: existingUser.firstName,
+          lastName: existingUser.lastName,
+          phone: existingUser.phone
         },
         status: true
       });

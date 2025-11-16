@@ -21,6 +21,7 @@ import Booknow from "../pages/ClientSide/BookNow";
 import Rooms from "../pages/ClientSide/Rooms";
 import About from "../pages/ClientSide/About";
 import Contact from "../pages/ClientSide/Contact";
+import RoomEdit from "../pages/Rooms/RoomEdit";
 
 const AppRoutes = () => (
   <Routes>
@@ -110,6 +111,11 @@ const AppRoutes = () => (
       <Route path="request-cleaning" element={
           <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
             <RequestCleaning />
+          </ProtectedRoute>
+        } />
+      <Route path="rooms/edit/:id" element={
+          <ProtectedRoute roles={["admin", "manager"]}>
+            <RoomEdit />
           </ProtectedRoute>
         } />
     </Route>

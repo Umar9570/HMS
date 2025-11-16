@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Index = () => {
+  const { user, logout } = useContext(AuthContext);
   return (
     <div className="client-home">
 
@@ -44,11 +46,19 @@ const Index = () => {
                   Contact Us
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link to={'/login'} className="nav-link fw-semibold">
-                  Login
-                </Link>
-              </li>
+              {user ? (
+                <>
+                  <li className="nav-item">
+                    <button className="nav-link fw-semibold" onClick={logout}>
+                      Logout
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <Link to="/login" className="nav-link fw-semibold">Login</Link>
+                </li>
+              )}
               <li className="nav-item">
                 <Link to={'/booknow'} className="btn btn-primary px-3 fw-semibold">
                   Book Now
@@ -82,7 +92,7 @@ const Index = () => {
       <section className="py-5">
         <div className="container">
           <div className="row align-items-center">
-            
+
             {/* LEFT TEXT */}
             <div className="col-lg-6 mb-4">
               <h2 className="fw-bold text-primary mb-3">Welcome to LuxuryStay</h2>

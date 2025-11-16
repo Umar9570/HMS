@@ -122,3 +122,40 @@ exports.syncRoomStatus = async (roomId) => {
         console.error('Error syncing room status:', error.message);
     }
 };
+
+// Update entire room
+exports.updateRoom = async (req, res) => {
+    try {
+        const { roomNumber, roomType, pricePerNight, status, amenities, description } = req.body;
+
+        // Optional: check if roomNumber is duplicate
+        const existing = await Room.findOne({ roomNumber });
+        if (existing && existing._id.toString() !== req.params.id) {
+            return res.status(400).json({ message: `duplicate: Room ${roomNumber} already exists` });
+        }
+
+        const room = await Room.findByIdAndUpdate(
+            req.params.id,
+            { roomNumber, roomType, pricePerNight, status, amenities, description },
+            { new: true }
+        );
+
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        res.status(200).json({ message: 'Room updated', room });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating room', error: error.message });
+    }
+};
+
+// Delete a room
+exports.deleteRoom = async (req, res) => {
+    try {
+        const room = await Room.findByIdAndDelete(req.params.id);
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        res.status(200).json({ message: 'Room deleted successfully', room });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting room', error: error.message });
+    }
+};

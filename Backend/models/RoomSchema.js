@@ -14,8 +14,7 @@ const roomSchema = new Schema({
     default: 'available'
   },
   amenities: [String],
-  description: String,
-  images: [String]
+  description: String
 }, { timestamps: true });
 
 const RoomModel = mongoose.model('Room', roomSchema);

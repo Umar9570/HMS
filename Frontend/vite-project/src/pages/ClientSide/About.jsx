@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const About = () => {
+    const { user, logout } = useContext(AuthContext);
     return (
         <div className="client-about">
 
@@ -39,11 +41,19 @@ const About = () => {
                                     Contact Us
                                 </Link>
                             </li>
-                            <li className="nav-item">
-                                <Link to={'/login'} className="nav-link fw-semibold">
-                                    Login
-                                </Link>
-                            </li>
+                            {user ? (
+                                <>
+                                    <li className="nav-item">
+                                        <button className="nav-link fw-semibold" onClick={logout}>
+                                            Logout
+                                        </button>
+                                    </li>
+                                </>
+                            ) : (
+                                <li className="nav-item">
+                                    <Link to="/login" className="nav-link fw-semibold">Login</Link>
+                                </li>
+                            )}
                             <li className="nav-item">
                                 <Link to={'/booknow'} className="btn btn-primary px-3 fw-semibold">
                                     Book Now

@@ -1,118 +1,32 @@
-import React from "react";
-import { Table, Badge, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Table, Badge, Button, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/axios"; // your axios instance
+import { toast } from "react-toastify";
 
 const RoomList = () => {
-  // Dummy room data
-  const rooms = [
-    {
-      _id: "1",
-      roomNumber: "101",
-      roomType: "single",
-      pricePerNight: 1200,
-      status: "available",
-      amenities: ["Wi-Fi", "TV", "AC"],
-      description: "Cozy single room with city view",
-    },
-    {
-      _id: "2",
-      roomNumber: "102",
-      roomType: "double",
-      pricePerNight: 2000,
-      status: "occupied",
-      amenities: ["Wi-Fi", "TV", "Mini Fridge", "Balcony"],
-      description: "Spacious double room with balcony access",
-    },
-    {
-      _id: "3",
-      roomNumber: "201",
-      roomType: "suite",
-      pricePerNight: 3500,
-      status: "cleaning",
-      amenities: ["Wi-Fi", "TV", "Mini Bar", "Jacuzzi"],
-      description: "Luxury suite with premium amenities",
-    },
-    {
-      _id: "4",
-      roomNumber: "202",
-      roomType: "deluxe",
-      pricePerNight: 2800,
-      status: "maintenance",
-      amenities: ["Wi-Fi", "TV", "AC", "Room Service"],
-      description: "Deluxe room undergoing maintenance",
-    },
-    {_id: "5",
-    roomNumber: "101",
-    roomType: "single",
-    pricePerNight: 1200,
-    status: "available",
-    amenities: ["Wi-Fi", "TV", "AC"],
-    description: "Cozy single room with city view",
-    },
-    {
-      _id: "6",
-      roomNumber: "102",
-      roomType: "double",
-      pricePerNight: 2000,
-      status: "occupied",
-      amenities: ["Wi-Fi", "TV", "Mini Fridge", "Balcony"],
-      description: "Spacious double room with balcony access",
-    },
-    {
-      _id: "7",
-      roomNumber: "201",
-      roomType: "suite",
-      pricePerNight: 3500,
-      status: "cleaning",
-      amenities: ["Wi-Fi", "TV", "Mini Bar", "Jacuzzi"],
-      description: "Luxury suite with premium amenities",
-    },
-    {
-        _id: "8",
-      roomNumber: "202",
-      roomType: "deluxe",
-      pricePerNight: 2800,
-      status: "maintenance",
-      amenities: ["Wi-Fi", "TV", "AC", "Room Service"],
-      description: "Deluxe room undergoing maintenance",
-    },
-    {
-      _id: "9",
-      roomNumber: "101",
-      roomType: "single",
-      pricePerNight: 1200,
-      status: "available",
-      amenities: ["Wi-Fi", "TV", "AC"],
-      description: "Cozy single room with city view",
-    },
-    {
-      _id: "10",
-      roomNumber: "102",
-      roomType: "double",
-      pricePerNight: 2000,
-      status: "occupied",
-      amenities: ["Wi-Fi", "TV", "Mini Fridge", "Balcony"],
-      description: "Spacious double room with balcony access",
-    },
-    {
-      _id: "11",
-      roomNumber: "201",
-      roomType: "suite",
-      pricePerNight: 3500,
-      status: "cleaning",
-      amenities: ["Wi-Fi", "TV", "Mini Bar", "Jacuzzi"],
-      description: "Luxury suite with premium amenities",
-    },
-    {
-      _id: "12",
-      roomNumber: "202",
-      roomType: "deluxe",
-      pricePerNight: 2800,
-      status: "maintenance",
-      amenities: ["Wi-Fi", "TV", "AC", "Room Service"],
-      description: "Deluxe room undergoing maintenance",
-    },
-    
-  ];
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  // Fetch all rooms from backend
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/rooms");
+      setRooms(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch rooms");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
 
   // Badge color based on room status
   const getStatusBadge = (status) => {
@@ -130,66 +44,108 @@ const RoomList = () => {
     }
   };
 
+  // Handle Delete
+  const handleDelete = async (roomId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this room?");
+    if (!confirmed) return;
+
+    try {
+      await api.delete(`/rooms/${roomId}`);
+      toast.success("Room deleted successfully");
+      fetchRooms();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete room");
+    }
+  };
+
+  // Handle Edit
+  const handleEdit = (roomId) => {
+    navigate(`/rooms/edit/${roomId}`);
+  };
+
   return (
     <div className="p-4">
       {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <h4 className="fw-semibold text-secondary mb-0">All Rooms</h4>
-        <Button variant="primary" className="d-flex align-items-center">
+        <Button
+          variant="primary"
+          className="d-flex align-items-center"
+          onClick={() => navigate("/add-room")}
+        >
           <i className="bi bi-plus-lg me-2"></i>Add New Room
         </Button>
       </div>
 
-      {/* Table Wrapper */}
+      {/* Table */}
       <div className="table-responsive shadow-sm rounded bg-white">
-        <Table hover className="align-middle mb-0">
-          <thead className="table-light">
-            <tr>
-              <th>#</th>
-              <th>Room No</th>
-              <th>Type</th>
-              <th>Price / Night</th>
-              <th>Status</th>
-              <th>Amenities</th>
-              <th>Description</th>
-              <th className="text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rooms.map((room, index) => (
-              <tr key={room._id}>
-                <td>{index + 1}</td>
-                <td className="fw-semibold">{room.roomNumber}</td>
-                <td className="text-capitalize">{room.roomType}</td>
-                <td>₹{room.pricePerNight.toLocaleString()}</td>
-                <td>
-                  <Badge bg={getStatusBadge(room.status)} className="px-2 py-1 text-capitalize">
-                    {room.status}
-                  </Badge>
-                </td>
-                <td>
-                  {room.amenities && room.amenities.length > 0 ? (
-                    room.amenities.slice(0, 3).join(", ") +
-                    (room.amenities.length > 7 ? "..." : "")
-                  ) : (
-                    <span className="text-muted small">None</span>
-                  )}
-                </td>
-                <td>
-                  {room.description || "-"}
-                </td>
-                <td className="text-end">
-                  <Button variant="outline-primary" size="sm" className="me-2">
-                    <i className="bi bi-pencil"></i>
-                  </Button>
-                  <Button variant="outline-danger" size="sm">
-                    <i className="bi bi-trash"></i>
-                  </Button>
-                </td>
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            <Spinner animation="border" />
+          </div>
+        ) : rooms.length === 0 ? (
+          <div className="text-center py-5 text-muted">No rooms available</div>
+        ) : (
+          <Table hover className="align-middle mb-0">
+            <thead className="table-light">
+              <tr>
+                <th>#</th>
+                <th>Room No</th>
+                <th>Type</th>
+                <th>Price / Night</th>
+                <th>Status</th>
+                <th>Amenities</th>
+                <th>Description</th>
+                <th className="text-end">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {rooms.map((room, index) => (
+                <tr key={room._id}>
+                  <td>{index + 1}</td>
+                  <td className="fw-semibold">{room.roomNumber}</td>
+                  <td className="text-capitalize">{room.roomType}</td>
+                  <td>₹{room.pricePerNight.toLocaleString()}</td>
+                  <td>
+                    <Badge
+                      bg={getStatusBadge(room.status)}
+                      className="px-2 py-1 text-capitalize"
+                    >
+                      {room.status}
+                    </Badge>
+                  </td>
+                  <td>
+                    {room.amenities && room.amenities.length > 0 ? (
+                      room.amenities.slice(0, 3).join(", ") +
+                      (room.amenities.length > 3 ? "..." : "")
+                    ) : (
+                      <span className="text-muted small">None</span>
+                    )}
+                  </td>
+                  <td>{room.description || "-"}</td>
+                  <td className="text-end">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => handleEdit(room._id)}
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleDelete(room._id)}
+                    >
+                      <i className="bi bi-trash"></i>
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </div>
 
       {/* Inline Styles */}

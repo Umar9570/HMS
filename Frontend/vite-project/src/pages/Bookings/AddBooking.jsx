@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Card } from "react-bootstrap";
+import api from "../../api/axios"; // your axios instance
+import { toast } from "react-toastify";
 
 const AddBooking = () => {
-  // Dummy rooms data
-  const [rooms] = useState([
-    { _id: "1", roomNumber: "101", roomType: "single", pricePerNight: 2000, status: "available" },
-    { _id: "2", roomNumber: "102", roomType: "single", pricePerNight: 2100, status: "occupied" },
-    { _id: "3", roomNumber: "203", roomType: "double", pricePerNight: 3000, status: "available" },
-    { _id: "4", roomNumber: "305", roomType: "suite", pricePerNight: 5000, status: "available" },
-    { _id: "5", roomNumber: "402", roomType: "deluxe", pricePerNight: 4500, status: "maintenance" },
-  ]);
+  const [rooms, setRooms] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -24,9 +20,23 @@ const AddBooking = () => {
     totalPrice: "",
   });
 
-  const [availableRooms, setAvailableRooms] = useState([]);
+  const today = new Date().toISOString().split("T")[0];
 
-  // Update available rooms based on selected type
+  // Fetch all rooms
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const { data } = await api.get("/rooms");
+        setRooms(data || []);
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+        toast.error("Failed to fetch rooms");
+      }
+    };
+    fetchRooms();
+  }, []);
+
+  // Update available rooms when room type changes
   useEffect(() => {
     if (formData.roomType) {
       const filtered = rooms.filter(
@@ -36,12 +46,13 @@ const AddBooking = () => {
     } else {
       setAvailableRooms([]);
     }
+    setFormData((prev) => ({ ...prev, roomId: "" })); // reset selected room
   }, [formData.roomType, rooms]);
 
-  // Calculate total price based on dates and selected room
+  // Calculate total price when room or dates change
   useEffect(() => {
-    if (formData.checkInDate && formData.checkOutDate && formData.roomId) {
-      const selectedRoom = rooms.find((r) => r._id === formData.roomId);
+    if (formData.roomId && formData.checkInDate && formData.checkOutDate) {
+      const room = rooms.find((r) => r._id === formData.roomId);
       const checkIn = new Date(formData.checkInDate);
       const checkOut = new Date(formData.checkOutDate);
       const nights = Math.max(
@@ -50,21 +61,68 @@ const AddBooking = () => {
       );
       setFormData((prev) => ({
         ...prev,
-        totalPrice: selectedRoom ? nights * selectedRoom.pricePerNight : "",
+        totalPrice: room ? nights * room.pricePerNight : "",
       }));
     }
-  }, [formData.checkInDate, formData.checkOutDate, formData.roomId]);
+  }, [formData.roomId, formData.checkInDate, formData.checkOutDate, rooms]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Booking Created:", formData);
-    alert("Booking added successfully!");
-    // In real app: send to backend
+
+    if (!formData.roomId) return toast.error("Please select a room");
+
+    try {
+      // Create guest first
+      const guestPayload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        password: "Temp@1234", // temporary password for guest
+      };
+
+      const guestRes = await api.post("/users", guestPayload); // backend endpoint to create user
+      const guestId = guestRes.data.user?._id;
+
+      if (!guestId) return toast.error("Failed to create guest");
+
+      // Create booking
+      const bookingPayload = {
+        guestId,
+        roomId: formData.roomId,
+        checkInDate: formData.checkInDate,
+        checkOutDate: formData.checkOutDate,
+        numberOfGuests: formData.numberOfGuests,
+      };
+
+      const { data } = await api.post("/bookings", bookingPayload);
+
+      if (data.booking) {
+        toast.success("Booking added successfully!");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          roomType: "",
+          roomId: "",
+          checkInDate: "",
+          checkOutDate: "",
+          numberOfGuests: 1,
+          totalPrice: "",
+        });
+      } else {
+        toast.error(data.message || "Failed to create booking");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error while creating booking");
+    }
   };
 
   return (
@@ -100,6 +158,7 @@ const AddBooking = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Enter last name"
+                    required
                   />
                 </Form.Group>
               </Col>
@@ -143,10 +202,11 @@ const AddBooking = () => {
                     required
                   >
                     <option value="">Select room type</option>
-                    <option value="single">Single</option>
-                    <option value="double">Double</option>
-                    <option value="suite">Suite</option>
-                    <option value="deluxe">Deluxe</option>
+                    {[...new Set(rooms.map((r) => r.roomType))].map((type) => (
+                      <option key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -167,7 +227,7 @@ const AddBooking = () => {
                     </option>
                     {availableRooms.map((room) => (
                       <option key={room._id} value={room._id}>
-                        Room {room.roomNumber} — ₹{room.pricePerNight}/night
+                        Room {room.roomNumber} — ${room.pricePerNight}/night
                       </option>
                     ))}
                   </Form.Select>
@@ -185,6 +245,7 @@ const AddBooking = () => {
                     name="checkInDate"
                     value={formData.checkInDate}
                     onChange={handleChange}
+                    min={today}
                     required
                   />
                 </Form.Group>
@@ -197,6 +258,7 @@ const AddBooking = () => {
                     name="checkOutDate"
                     value={formData.checkOutDate}
                     onChange={handleChange}
+                    min={formData.checkInDate || today}
                     required
                   />
                 </Form.Group>
@@ -216,7 +278,7 @@ const AddBooking = () => {
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Total Price (₹)</Form.Label>
+                  <Form.Label>Total Price ($)</Form.Label>
                   <Form.Control
                     type="text"
                     value={formData.totalPrice}
@@ -236,7 +298,6 @@ const AddBooking = () => {
         </Card.Body>
       </Card>
 
-      {/* Inline Styles */}
       <style>{`
         .card {
           border-radius: 14px;
