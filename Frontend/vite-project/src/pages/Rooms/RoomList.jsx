@@ -106,7 +106,7 @@ const RoomList = () => {
                   <td>{index + 1}</td>
                   <td className="fw-semibold">{room.roomNumber}</td>
                   <td className="text-capitalize">{room.roomType}</td>
-                  <td>₹{room.pricePerNight.toLocaleString()}</td>
+                  <td>${room.pricePerNight.toLocaleString()}</td>
                   <td>
                     <Badge
                       bg={getStatusBadge(room.status)}

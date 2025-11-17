@@ -39,7 +39,7 @@ const AppRoutes = () => (
     <Route
       path="/"
       element={
-        <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
+        <ProtectedRoute roles={["admin", "manager", "receptionist", "housekeeping"]}>
           <DashboardLayout />
         </ProtectedRoute>
       }
@@ -84,32 +84,32 @@ const AppRoutes = () => (
           </ProtectedRoute>
         } />
       <Route path="bookings" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist"]}>
             <BookingList />
           </ProtectedRoute>
         } />
       <Route path="add-booking" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist"]}>
             <AddBooking />
           </ProtectedRoute>
         } />
       <Route path="feedbacks" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist"]}>
             <FeedbackList />
           </ProtectedRoute>
         } />
       <Route path="complaints" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist"]}>
             <ComplaintList />
           </ProtectedRoute>
         } />
       <Route path="cleaning-requests" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist", "housekeeping"]}>
             <CleaningReq />
           </ProtectedRoute>
         } />
       <Route path="request-cleaning" element={
-          <ProtectedRoute roles={["admin", "manager", "reciptionist", "housekeeping"]}>
+          <ProtectedRoute roles={["admin", "manager", "receptionist", "housekeeping"]}>
             <RequestCleaning />
           </ProtectedRoute>
         } />

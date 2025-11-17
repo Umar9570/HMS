@@ -1,18 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Card, Row, Col, Alert, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { AuthContext } from "../../context/AuthContext";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
 
 const CreateStaff = () => {
+  const { user: currentUser } = useContext(AuthContext); // logged-in user
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     password: "",
-    role: "Manager",
+    role: "receptionist",
   });
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [availableRoles, setAvailableRoles] = useState([]);
+
+  useEffect(() => {
+    if (currentUser) {
+      const roles = [];
+      if (currentUser.role === "admin") roles.push("admin", "manager", "receptionist", "housekeeper");
+      else if (currentUser.role === "manager") roles.push("receptionist", "housekeeper");
+      setAvailableRoles(roles);
+      if (!roles.includes(formData.role)) {
+        setFormData((prev) => ({ ...prev, role: roles[0] }));
+      }
+    }
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,27 +43,25 @@ const CreateStaff = () => {
     setMessage({ type: "", text: "" });
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const { data } = await api.post("/auth/create-staff", formData);
 
-      // Replace this later with your actual API request
-      console.log("New staff created:", formData);
-
-      setMessage({
-        type: "success",
-        text: `${formData.role} created successfully!`,
-      });
-
-      // Reset form
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        password: "",
-        role: "Manager",
-      });
-    } catch (error) {
-      setMessage({ type: "danger", text: "Something went wrong. Try again." });
+      if (data.status) {
+        setMessage({ type: "success", text: `Staff (${formData.role}) created successfully!` });
+        toast.success(`Staff (${formData.role}) created successfully`);
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          password: "",
+          role: availableRoles[0] || "receptionist",
+        });
+      } else {
+        setMessage({ type: "danger", text: data.message || "Failed to create staff" });
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage({ type: "danger", text: "Server error. Try again." });
     } finally {
       setLoading(false);
     }
@@ -64,22 +80,33 @@ const CreateStaff = () => {
                 Fill in the details below to register a new staff member.
               </p>
 
-              {message.text && (
-                <Alert variant={message.type}>{message.text}</Alert>
-              )}
+              {message.text && <Alert variant={message.type}>{message.text}</Alert>}
 
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="fullName">
-                  <Form.Label>Full Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="fullName"
-                    placeholder="Enter full name"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
+                <Row>
+                  <Form.Group className="mb-3 col-6" controlId="firstName">
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="firstName"
+                      placeholder="Enter first name"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3 col-6" controlId="lastName">
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="lastName"
+                      placeholder="Enter last name"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Row>
 
                 <Form.Group className="mb-3" controlId="email">
                   <Form.Label>Email Address</Form.Label>
@@ -124,19 +151,16 @@ const CreateStaff = () => {
                     value={formData.role}
                     onChange={handleChange}
                   >
-                    <option value="Manager">Manager</option>
-                    <option value="Receptionist">Receptionist</option>
-                    <option value="Housekeeper">Housekeeper</option>
+                    {availableRoles.map((r) => (
+                      <option key={r} value={r}>
+                        {r.charAt(0).toUpperCase() + r.slice(1)}
+                      </option>
+                    ))}
                   </Form.Select>
                 </Form.Group>
 
                 <div className="d-grid">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    disabled={loading}
-                    className="py-2 fw-semibold"
-                  >
+                  <Button variant="primary" type="submit" disabled={loading} className="py-2 fw-semibold">
                     {loading ? (
                       <>
                         <Spinner
@@ -160,26 +184,14 @@ const CreateStaff = () => {
         </Col>
       </Row>
 
-      {/* Inline styles for consistency */}
+      {/* Inline styles */}
       <style>{`
-        .form-label {
-          font-weight: 500;
-          color: #475569;
-        }
-        .form-control, .form-select {
-          border-radius: 10px;
-          padding: 10px 12px;
-        }
+        .form-label { font-weight: 500; color: #475569; }
+        .form-control, .form-select { border-radius: 10px; padding: 10px 12px; }
         .btn-primary {
-          background-color: #1099a8;
-          border-color: #1099a8;
-          border-radius: 10px;
-          transition: all 0.3s ease;
+          background-color: #1099a8; border-color: #1099a8; border-radius: 10px; transition: all 0.3s ease;
         }
-        .btn-primary:hover {
-          background-color: #0e8997;
-          border-color: #0e8997;
-        }
+        .btn-primary:hover { background-color: #0e8997; border-color: #0e8997; }
       `}</style>
     </div>
   );

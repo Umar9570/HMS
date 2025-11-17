@@ -6,7 +6,7 @@ const Invoice = require('../models/InvoiceSchema');
 // ------------------- CREATE NEW BOOKING -------------------
 exports.createBooking = async (req, res) => {
     try {
-        const { guestId, roomId, checkInDate, checkOutDate, numberOfGuests } = req.body;
+        const { guestId, roomId, checkInDate, checkOutDate, numberOfGuests, guestName, guestPhone } = req.body;
 
         // Check if room exists and is available
         const room = await Room.findById(roomId);
@@ -14,15 +14,17 @@ exports.createBooking = async (req, res) => {
         if (room.status !== 'available')
             return res.status(400).json({ message: 'Room is not available for booking' });
 
-        // Calculate total price (basic version)
+        // Calculate total price
         const checkIn = new Date(checkInDate);
         const checkOut = new Date(checkOutDate);
         const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
         const totalPrice = nights * room.pricePerNight;
 
-        // Create booking
+        // Create booking (supports both online user + walk-in)
         const booking = new Booking({
-            guestId,
+            guestId: guestId || null,
+            guestName: guestName || null,
+            guestPhone: guestPhone || null,
             roomId,
             checkInDate,
             checkOutDate,
@@ -32,7 +34,7 @@ exports.createBooking = async (req, res) => {
 
         await booking.save();
 
-        // Update room status to occupied
+        // Update room to occupied
         room.status = 'occupied';
         await room.save();
 
@@ -46,8 +48,9 @@ exports.createBooking = async (req, res) => {
 exports.getAllBookings = async (req, res) => {
     try {
         const bookings = await Booking.find()
-            .populate('guestId', 'firstName lastName email')
+            .populate('guestId', 'firstName lastName email phone') // FIXED: added phone
             .populate('roomId', 'roomNumber roomType pricePerNight');
+
         res.status(200).json(bookings);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching bookings', error: error.message });
@@ -58,9 +61,11 @@ exports.getAllBookings = async (req, res) => {
 exports.getBookingById = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id)
-            .populate('guestId', 'firstName lastName email')
+            .populate('guestId', 'firstName lastName email phone') // FIXED: added phone
             .populate('roomId', 'roomNumber roomType pricePerNight');
+
         if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
         res.status(200).json(booking);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching booking', error: error.message });
@@ -70,10 +75,13 @@ exports.getBookingById = async (req, res) => {
 // ------------------- CHECK-IN -------------------
 exports.checkIn = async (req, res) => {
     try {
-        const booking = await Booking.findById(req.params.id);
+        const booking = await Booking.findById(req.params.id)
+            .populate('guestId', 'firstName lastName email phone'); // FIXED
+
         if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
         booking.status = 'checked-in';
+        booking.paymentStatus = 'paid';
         await booking.save();
 
         const room = await Room.findById(booking.roomId);
@@ -90,45 +98,40 @@ exports.checkIn = async (req, res) => {
 exports.checkOut = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id)
-            .populate('guestId', 'firstName lastName email')
+            .populate('guestId', 'firstName lastName email phone') // FIXED
             .populate('roomId', 'roomNumber roomType pricePerNight');
 
         if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
-        // Update booking details
         booking.status = 'checked-out';
         booking.paymentStatus = 'paid';
         await booking.save();
 
-        // Update room status to cleaning
+        // Update room to cleaning
         const room = await Room.findById(booking.roomId);
         room.status = 'cleaning';
         await room.save();
 
-        // --- Generate Invoice Automatically ---
+        // Invoice
         const roomCharge = booking.totalPrice;
-        const taxRate = 0.1; // 10% tax example
+        const taxRate = 0.1;
         const taxes = roomCharge * taxRate;
         const totalAmount = roomCharge + taxes;
 
-        // Create invoice items array
-        const items = [
-            {
-                description: `Room stay (${room.roomType})`,
-                amount: roomCharge,
-                type: 'room'
-            }
-        ];
-
-        // Create the invoice document
         const invoice = new Invoice({
             bookingId: booking._id,
-            guestId: booking.guestId._id,
-            items,
+            guestId: booking.guestId?._id || null,
+            items: [
+                {
+                    description: `Room stay (${room.roomType})`,
+                    amount: roomCharge,
+                    type: 'room'
+                }
+            ],
             subtotal: roomCharge,
             taxes,
             totalAmount,
-            paymentMethod: 'card', // default for now
+            paymentMethod: 'card',
             issuedDate: new Date(),
             paid: true
         });
@@ -148,7 +151,9 @@ exports.checkOut = async (req, res) => {
 // ------------------- CANCEL BOOKING -------------------
 exports.cancelBooking = async (req, res) => {
     try {
-        const booking = await Booking.findById(req.params.id);
+        const booking = await Booking.findById(req.params.id)
+            .populate('guestId', 'firstName lastName email phone'); // FIXED
+
         if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
         booking.status = 'cancelled';

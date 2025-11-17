@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Card } from "react-bootstrap";
-import api from "../../api/axios"; // your axios instance
+import api from "../../api/axios";
 import { toast } from "react-toastify";
 
 const AddBooking = () => {
@@ -36,7 +36,7 @@ const AddBooking = () => {
     fetchRooms();
   }, []);
 
-  // Update available rooms when room type changes
+  // Update available rooms on roomType change
   useEffect(() => {
     if (formData.roomType) {
       const filtered = rooms.filter(
@@ -46,19 +46,21 @@ const AddBooking = () => {
     } else {
       setAvailableRooms([]);
     }
-    setFormData((prev) => ({ ...prev, roomId: "" })); // reset selected room
+    setFormData((prev) => ({ ...prev, roomId: "" }));
   }, [formData.roomType, rooms]);
 
-  // Calculate total price when room or dates change
+  // Calculate total price
   useEffect(() => {
     if (formData.roomId && formData.checkInDate && formData.checkOutDate) {
       const room = rooms.find((r) => r._id === formData.roomId);
       const checkIn = new Date(formData.checkInDate);
       const checkOut = new Date(formData.checkOutDate);
+
       const nights = Math.max(
         1,
         Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24))
       );
+
       setFormData((prev) => ({
         ...prev,
         totalPrice: room ? nights * room.pricePerNight : "",
@@ -71,39 +73,33 @@ const AddBooking = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ------------------ CREATE BOOKING ------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.roomId) return toast.error("Please select a room");
 
     try {
-      // Create guest first
-      const guestPayload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        password: "Temp@1234", // temporary password for guest
-      };
-
-      const guestRes = await api.post("/users", guestPayload); // backend endpoint to create user
-      const guestId = guestRes.data.user?._id;
-
-      if (!guestId) return toast.error("Failed to create guest");
-
-      // Create booking
       const bookingPayload = {
-        guestId,
         roomId: formData.roomId,
         checkInDate: formData.checkInDate,
         checkOutDate: formData.checkOutDate,
         numberOfGuests: formData.numberOfGuests,
+
+        // walk-in guest info
+        guestInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+        },
       };
 
       const { data } = await api.post("/bookings", bookingPayload);
 
       if (data.booking) {
         toast.success("Booking added successfully!");
+
         setFormData({
           firstName: "",
           lastName: "",
@@ -144,11 +140,11 @@ const AddBooking = () => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Enter first name"
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Last Name</Form.Label>
@@ -157,11 +153,11 @@ const AddBooking = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    placeholder="Enter last name"
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
@@ -170,11 +166,11 @@ const AddBooking = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="Enter email"
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Phone</Form.Label>
@@ -183,7 +179,6 @@ const AddBooking = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Enter phone number"
                     required
                   />
                 </Form.Group>
@@ -210,6 +205,7 @@ const AddBooking = () => {
                   </Form.Select>
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Select Room</Form.Label>
@@ -225,6 +221,7 @@ const AddBooking = () => {
                         ? "Select available room"
                         : "No rooms available"}
                     </option>
+
                     {availableRooms.map((room) => (
                       <option key={room._id} value={room._id}>
                         Room {room.roomNumber} — ${room.pricePerNight}/night
@@ -243,26 +240,28 @@ const AddBooking = () => {
                   <Form.Control
                     type="date"
                     name="checkInDate"
+                    min={today}
                     value={formData.checkInDate}
                     onChange={handleChange}
-                    min={today}
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Check-Out Date</Form.Label>
                   <Form.Control
                     type="date"
                     name="checkOutDate"
+                    min={formData.checkInDate || today}
                     value={formData.checkOutDate}
                     onChange={handleChange}
-                    min={formData.checkInDate || today}
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Number of Guests</Form.Label>
@@ -276,22 +275,19 @@ const AddBooking = () => {
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Total Price ($)</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={formData.totalPrice}
-                    readOnly
-                    placeholder="Auto calculated"
-                  />
+                  <Form.Control type="text" value={formData.totalPrice} readOnly />
                 </Form.Group>
               </Col>
             </Row>
 
             <div className="text-end">
               <Button type="submit" variant="success" className="px-4">
-                <i className="bi bi-check2-circle me-2"></i>Confirm Booking
+                <i className="bi bi-check2-circle me-2"></i>
+                Confirm Booking
               </Button>
             </div>
           </Form>
@@ -299,22 +295,11 @@ const AddBooking = () => {
       </Card>
 
       <style>{`
-        .card {
-          border-radius: 14px;
-        }
-        h5 {
-          font-weight: 600;
-        }
-        .form-control, .form-select {
-          border-radius: 8px;
-        }
-        button {
-          border-radius: 8px;
-          transition: all 0.2s ease;
-        }
-        button:hover {
-          transform: translateY(-2px);
-        }
+        .card { border-radius: 14px; }
+        h5 { font-weight: 600; }
+        .form-control, .form-select { border-radius: 8px; }
+        button { border-radius: 8px; transition: 0.2s; }
+        button:hover { transform: translateY(-2px); }
       `}</style>
     </div>
   );

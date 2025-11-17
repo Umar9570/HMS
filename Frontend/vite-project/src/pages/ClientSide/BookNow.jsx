@@ -102,7 +102,7 @@ const Booknow = () => {
 
         try {
             const payload = {
-                guestId: user._id,
+                guestId: user.id,
                 roomId: formData.roomId,
                 checkInDate: formData.checkInDate,
                 checkOutDate: formData.checkOutDate,

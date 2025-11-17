@@ -6,7 +6,7 @@ const cors = require('cors');
 require('dotenv').config()
 app.use(express.json())
 app.use(cors())
-app.use('/api/auth', require('./Routes/AuthRoutes'))
+app.use('/api/auth', require('./Routes/AuthRoutes'));
 app.use('/api/bookings', require('./Routes/BookingRoutes')); 
 app.use('/api/rooms', require('./Routes/RoomRoutes'));
 app.use('/api/housekeeping', require('./Routes/HouseKeepingRoutes'));
