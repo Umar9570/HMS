@@ -1,56 +1,66 @@
-import React, { useState } from "react";
-import { Card, Button, Badge } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Card, Button, Badge, Spinner, Alert } from "react-bootstrap";
+import api from "../../api/axios";
 
 const CleaningRequests = () => {
-  // Dummy data for now
-  const [requests, setRequests] = useState([
-    {
-      _id: "1",
-      roomNumber: "101",
-      issue: "Guest requested cleaning after checkout.",
-      reportedBy: "Emma Wilson",
-      status: "pending",
-      assignedTo: "John (Housekeeper)",
-      createdAt: "2025-11-12T09:30:00Z",
-    },
-    {
-      _id: "2",
-      roomNumber: "203",
-      issue: "Spilled food on carpet, urgent clean needed.",
-      reportedBy: "Liam Smith",
-      status: "in-progress",
-      assignedTo: "Anna (Housekeeper)",
-      createdAt: "2025-11-11T14:45:00Z",
-    },
-    {
-      _id: "3",
-      roomNumber: "305",
-      issue: "Routine daily cleaning.",
-      reportedBy: "System (Auto)",
-      status: "cleaned",
-      assignedTo: "Michael (Housekeeper)",
-      createdAt: "2025-11-10T08:00:00Z",
-    },
-  ]);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null); // ID of request being updated
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Handle status updates
-  const handleStart = (id) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r._id === id ? { ...r, status: "in-progress" } : r
-      )
-    );
+  // Fetch all cleaning requests
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get("/cleaning");
+      if (data.status) {
+        const formatted = data.requests.map((req) => ({
+          _id: req._id,
+          roomNumber: req.roomId?.roomNumber || "N/A",
+          issue: req.issue,
+          reportedBy:
+            req.reportedBy
+              ? `${req.reportedBy.firstName} ${req.reportedBy.lastName}`
+              : "Unknown",
+          status: req.status,
+          createdAt: req.createdAt,
+        }));
+        setRequests(formatted);
+      }
+    } catch (error) {
+      console.error("Error fetching cleaning requests:", error);
+      setErrorMessage("Failed to fetch cleaning requests.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleComplete = (id) => {
-    setRequests((prev) =>
-      prev.map((r) =>
-        r._id === id ? { ...r, status: "cleaned" } : r
-      )
-    );
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // Update status (start or complete cleaning)
+  const updateStatus = async (id, status) => {
+    try {
+      setUpdatingId(id);
+      const { data } = await api.put(`/cleaning/${id}/status`, { status });
+
+      if (data.status) {
+        setRequests((prev) =>
+          prev.map((r) => (r._id === id ? { ...r, status } : r))
+        );
+      } else {
+        setErrorMessage("Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Status update error:", error);
+      setErrorMessage("Error updating cleaning request status.");
+    } finally {
+      setUpdatingId(null);
+    }
   };
 
-  // Badge color mapping
+  // Badge colors
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
@@ -68,11 +78,34 @@ const CleaningRequests = () => {
     <div className="p-4">
       {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-        <h4 className="fw-semibold text-secondary mb-0">Cleaning Requests</h4>
-        <Button variant="primary" className="d-flex align-items-center">
+        <h4 className="fw-semibold text-secondary mb-0">
+          Cleaning Requests
+        </h4>
+
+        <Button variant="primary" className="d-flex align-items-center" onClick={fetchRequests}>
           <i className="bi bi-arrow-clockwise me-2"></i>Refresh
         </Button>
       </div>
+
+      {/* Error Alert */}
+      {errorMessage && (
+        <Alert variant="danger" onClose={() => setErrorMessage("")} dismissible>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {/* Loading Spinner */}
+      {loading && (
+        <div className="text-center py-5">
+          <Spinner animation="border" />
+          <p className="text-muted mt-2">Loading cleaning requests...</p>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && requests.length === 0 && (
+        <p className="text-center text-muted">No cleaning requests found.</p>
+      )}
 
       {/* Cards Grid */}
       <div className="row g-4">
@@ -80,20 +113,14 @@ const CleaningRequests = () => {
           <div key={req._id} className="col-12 col-md-6 col-lg-4">
             <Card className="shadow-sm border-0 h-100">
               <Card.Body className="d-flex flex-column">
+
                 {/* Header */}
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <div>
-                    <h6 className="fw-semibold mb-1 text-dark">
-                      Room {req.roomNumber}
-                    </h6>
-                    <p className="text-muted small mb-0">
-                      Reported by: {req.reportedBy}
-                    </p>
+                    <h6 className="fw-semibold mb-1 text-dark">Room {req.roomNumber}</h6>
+                    <p className="text-muted small mb-0">Reported by: {req.reportedBy}</p>
                   </div>
-                  <Badge
-                    bg={getStatusBadge(req.status)}
-                    className="text-capitalize px-2 py-1"
-                  >
+                  <Badge bg={getStatusBadge(req.status)} className="text-capitalize px-2 py-1">
                     {req.status}
                   </Badge>
                 </div>
@@ -113,6 +140,11 @@ const CleaningRequests = () => {
                     month: "short",
                     year: "numeric",
                   })}
+                  {" at "}
+                  {new Date(req.createdAt).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
 
                 {/* Action Buttons */}
@@ -122,9 +154,15 @@ const CleaningRequests = () => {
                       variant="outline-primary"
                       size="sm"
                       className="w-100"
-                      onClick={() => handleStart(req._id)}
+                      disabled={updatingId === req._id}
+                      onClick={() => updateStatus(req._id, "in-progress")}
                     >
-                      <i className="bi bi-play-circle me-1"></i>Start Cleaning
+                      {updatingId === req._id ? (
+                        <Spinner size="sm" animation="border" className="me-2" />
+                      ) : (
+                        <i className="bi bi-play-circle me-1"></i>
+                      )}
+                      Start Cleaning
                     </Button>
                   )}
 
@@ -133,19 +171,20 @@ const CleaningRequests = () => {
                       variant="success"
                       size="sm"
                       className="w-100"
-                      onClick={() => handleComplete(req._id)}
+                      disabled={updatingId === req._id}
+                      onClick={() => updateStatus(req._id, "cleaned")}
                     >
-                      <i className="bi bi-check-circle me-1"></i>Mark Cleaned
+                      {updatingId === req._id ? (
+                        <Spinner size="sm" animation="border" className="me-2" />
+                      ) : (
+                        <i className="bi bi-check-circle me-1"></i>
+                      )}
+                      Mark Cleaned
                     </Button>
                   )}
 
                   {req.status === "cleaned" && (
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      className="w-100"
-                      disabled
-                    >
+                    <Button variant="outline-secondary" size="sm" className="w-100" disabled>
                       <i className="bi bi-check2-all me-1"></i>Completed
                     </Button>
                   )}
@@ -156,7 +195,7 @@ const CleaningRequests = () => {
         ))}
       </div>
 
-      {/* Inline Styles */}
+      {/* Styles */}
       <style>{`
         .card {
           border-radius: 14px;
@@ -175,11 +214,6 @@ const CleaningRequests = () => {
         }
         .btn:hover {
           transform: translateY(-2px);
-        }
-        @media (max-width: 576px) {
-          .card {
-            border-radius: 10px;
-          }
         }
       `}</style>
     </div>

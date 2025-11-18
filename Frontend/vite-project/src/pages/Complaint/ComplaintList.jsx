@@ -1,56 +1,55 @@
-import React, { useState } from "react";
-import { Card, Badge, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Card, Badge, Button, Spinner, Alert } from "react-bootstrap";
+import api from "../../api/axios";
 
 const ComplaintList = () => {
-  // Dummy complaint data
-  const [complaints, setComplaints] = useState([
-    {
-      _id: "1",
-      name: "John Doe",
-      role: "guest",
-      phone: "+91 9876543210",
-      complaintType: "Room Service",
-      priority: "high",
-      message: "Room service was delayed by more than an hour.",
-      status: "pending",
-      date: "2025-11-10",
-    },
-    {
-      _id: "2",
-      name: "Emma Wilson",
-      role: "staff",
-      phone: "+91 9012345678",
-      complaintType: "Equipment",
-      priority: "medium",
-      message: "The housekeeping trolley’s wheel is broken.",
-      status: "in-progress",
-      date: "2025-11-09",
-    },
-    {
-      _id: "3",
-      name: "Liam Smith",
-      role: "guest",
-      phone: "+91 9823456789",
-      complaintType: "Cleanliness",
-      priority: "low",
-      message: "The corridor outside Room 305 was not cleaned properly.",
-      status: "resolved",
-      date: "2025-11-07",
-    },
-    {
-      _id: "4",
-      name: "Sophia Brown",
-      role: "staff",
-      phone: "+91 9123456780",
-      complaintType: "Technical Issue",
-      priority: "high",
-      message: "The AC unit in the reception is malfunctioning.",
-      status: "pending",
-      date: "2025-11-11",
-    },
-  ]);
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updatingId, setUpdatingId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Status badge colors
+  // Fetch complaints from API
+  const fetchComplaints = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get("/complaints");
+      if (data.status) {
+        setComplaints(data.complaints);
+      } else {
+        setErrorMessage("Failed to fetch complaints.");
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Error fetching complaints.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  // Update complaint status
+  const updateStatus = async (id, status) => {
+    try {
+      setUpdatingId(id);
+      const { data } = await api.put(`/complaints/${id}/status`, { status });
+      if (data.status) {
+        setComplaints((prev) =>
+          prev.map((c) => (c._id === id ? { ...c, status } : c))
+        );
+      } else {
+        setErrorMessage("Failed to update complaint status.");
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("Error updating complaint status.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
@@ -64,42 +63,38 @@ const ComplaintList = () => {
     }
   };
 
-  // Priority badge colors
-  const getPriorityBadge = (priority) => {
-    switch (priority) {
-      case "high":
-        return "danger";
-      case "medium":
-        return "primary";
-      case "low":
-        return "secondary";
-      default:
-        return "light";
-    }
-  };
-
-  // Mock handler to mark as resolved
-  const handleResolve = (id) => {
-    setComplaints((prev) =>
-      prev.map((c) =>
-        c._id === id ? { ...c, status: "resolved" } : c
-      )
-    );
-  };
-
   return (
     <div className="p-4">
-      {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <h4 className="fw-semibold text-secondary mb-0">All Complaints</h4>
+        <Button variant="primary" onClick={fetchComplaints}>
+          <i className="bi bi-arrow-clockwise me-2"></i>Refresh
+        </Button>
       </div>
 
-      {/* Complaint Cards */}
+      {errorMessage && (
+        <Alert variant="danger" onClose={() => setErrorMessage("")} dismissible>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {loading && (
+        <div className="text-center py-5">
+          <Spinner animation="border" />
+          <p className="text-muted mt-2">Loading complaints...</p>
+        </div>
+      )}
+
+      {!loading && complaints.length === 0 && (
+        <p className="text-center text-muted">No complaints found.</p>
+      )}
+
       <div className="row g-4">
         {complaints.map((c) => (
           <div key={c._id} className="col-12 col-md-6 col-lg-4">
             <Card className="shadow-sm border-0 h-100 complaint-card">
               <Card.Body className="d-flex flex-column">
+
                 {/* Header */}
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <div>
@@ -108,9 +103,6 @@ const ComplaintList = () => {
                       {c.role} — {c.phone}
                     </p>
                   </div>
-                  <Badge bg={getPriorityBadge(c.priority)} className="text-capitalize px-3 py-2">
-                    {c.priority} Priority
-                  </Badge>
                 </div>
 
                 {/* Complaint Type */}
@@ -123,7 +115,13 @@ const ComplaintList = () => {
                 <p className="small text-secondary mb-2">
                   <i className="bi bi-calendar-event me-2"></i>
                   <strong>Date:</strong>{" "}
-                  {new Date(c.date).toLocaleDateString()}
+                  {c.date ? new Date(c.date).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  }) : "N/A"}
                 </p>
 
                 {/* Status */}
@@ -136,7 +134,7 @@ const ComplaintList = () => {
                   </Badge>
                 </div>
 
-                {/* Complaint Message */}
+                {/* Message */}
                 <Card.Text className="text-secondary small flex-grow-1">
                   <i className="bi bi-chat-dots text-primary me-2"></i>
                   {c.message}
@@ -149,9 +147,15 @@ const ComplaintList = () => {
                       variant="success"
                       size="sm"
                       className="w-100"
-                      onClick={() => handleResolve(c._id)}
+                      disabled={updatingId === c._id}
+                      onClick={() => updateStatus(c._id, "resolved")}
                     >
-                      <i className="bi bi-check-circle me-1"></i>Mark as Resolved
+                      {updatingId === c._id ? (
+                        <Spinner size="sm" animation="border" className="me-2" />
+                      ) : (
+                        <i className="bi bi-check-circle me-1"></i>
+                      )}
+                      Mark as Resolved
                     </Button>
                   ) : (
                     <Button
@@ -164,13 +168,13 @@ const ComplaintList = () => {
                     </Button>
                   )}
                 </div>
+
               </Card.Body>
             </Card>
           </div>
         ))}
       </div>
 
-      {/* Inline Styles */}
       <style>{`
         .complaint-card {
           border-radius: 14px;

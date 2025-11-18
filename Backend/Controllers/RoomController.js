@@ -1,7 +1,7 @@
 const Room = require('../models/RoomSchema');
 const Booking = require('../models/BookingSchema');
 const MaintenanceRequest = require('../models/CleaningRequestSchema');
-const HousekeepingTaskModel = require('../models/HouseKeepingSchema');
+const HousekeepingTaskModel = require('../models/CleaningRequestSchema');
 
 // ------------------- ADD ROOM -------------------
 exports.addRoom = async (req, res) => {

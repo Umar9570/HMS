@@ -18,14 +18,7 @@ const complaintSchema = new Schema(
 
     // Complaint type/category (e.g., Room Service, Equipment, Cleanliness)
     complaintType: { type: String, required: true },
-
-    // Priority of the complaint
-    priority: {
-      type: String,
-      enum: ["low", "medium", "high"],
-      default: "low",
-    },
-
+    
     // Status of the complaint
     status: {
       type: String,

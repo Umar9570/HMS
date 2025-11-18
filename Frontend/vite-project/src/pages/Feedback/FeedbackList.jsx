@@ -1,106 +1,89 @@
-import React, { useState } from "react";
-import { Card, Badge } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Card, Badge, Spinner, Alert } from "react-bootstrap";
+import api from "../../api/axios";
 
 const FeedbackList = () => {
-  // Dummy feedback data
-  const [feedbacks] = useState([
-    {
-      _id: "1",
-      guestName: "John Doe",
-      phone: "+91 9876543210",
-      roomNumber: "101",
-      roomType: "single",
-      checkInDate: "2025-11-05",
-      rating: 5,
-      comment: "Amazing stay! Room was super clean and staff was helpful.",
-    },
-    {
-      _id: "2",
-      guestName: "Emma Wilson",
-      phone: "+91 9001234567",
-      roomNumber: "203",
-      roomType: "suite",
-      checkInDate: "2025-10-28",
-      rating: 4,
-      comment: "Comfortable room, but breakfast options could be better.",
-    },
-    {
-      _id: "3",
-      guestName: "Liam Smith",
-      phone: "+91 9823456789",
-      roomNumber: "305",
-      roomType: "deluxe",
-      checkInDate: "2025-11-01",
-      rating: 3,
-      comment: "Average experience, room service took too long.",
-    },
-    {
-      _id: "4",
-      guestName: "Sophia Brown",
-      phone: "+91 9123456780",
-      roomNumber: "402",
-      roomType: "double",
-      checkInDate: "2025-11-10",
-      rating: 5,
-      comment: "Absolutely wonderful stay. Highly recommended!",
-    },
-  ]);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Function to render star rating visually
-  const renderStars = (rating) => {
-    return (
-      <div className="text-warning">
-        {[...Array(5)].map((_, i) => (
-          <i
-            key={i}
-            className={`bi ${i < rating ? "bi-star-fill" : "bi-star"}`}
-          ></i>
-        ))}
-      </div>
-    );
-  };
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        setLoading(true);
+        const { data } = await api.get("/feedback");
+        if (data.status) {
+          setFeedbacks(data.feedbacks);
+        } else {
+          setErrorMessage("Failed to fetch feedbacks.");
+        }
+      } catch (error) {
+        console.error("Error fetching feedbacks:", error);
+        setErrorMessage("Error fetching feedbacks.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  const renderStars = (rating) => (
+    <div className="text-warning">
+      {[...Array(5)].map((_, i) => (
+        <i key={i} className={`bi ${i < rating ? "bi-star-fill" : "bi-star"}`}></i>
+      ))}
+    </div>
+  );
 
   return (
     <div className="p-4">
-      {/* Header */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <h4 className="fw-semibold text-secondary mb-0">User Feedbacks</h4>
       </div>
 
-      {/* Feedback Cards */}
+      {errorMessage && (
+        <Alert variant="danger" onClose={() => setErrorMessage("")} dismissible>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {loading && (
+        <div className="text-center py-5">
+          <Spinner animation="border" />
+          <p className="text-muted mt-2">Loading feedbacks...</p>
+        </div>
+      )}
+
+      {!loading && feedbacks.length === 0 && (
+        <p className="text-center text-muted">No feedbacks found.</p>
+      )}
+
       <div className="row g-4">
         {feedbacks.map((fb) => (
           <div key={fb._id} className="col-12 col-md-6 col-lg-4">
             <Card className="shadow-sm border-0 h-100 feedback-card">
               <Card.Body className="d-flex flex-column">
-                {/* Header */}
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <div>
-                    <h6 className="fw-semibold mb-1 text-dark">
-                      {fb.guestName}
-                    </h6>
-                    <p className="text-muted small mb-0">
-                      {fb.phone || "No phone number"}
-                    </p>
+                    <h6 className="fw-semibold mb-1 text-dark">{fb.guestName}</h6>
+                    <p className="text-muted small mb-0">{fb.phone || "No phone number"}</p>
                   </div>
                   <Badge bg="info" className="text-capitalize px-3 py-2">
                     Room {fb.roomNumber} ({fb.roomType})
                   </Badge>
                 </div>
 
-                {/* Check-in Date */}
                 <p className="small text-secondary mb-2">
                   <i className="bi bi-calendar-event me-2"></i>
                   Checked in on:{" "}
                   <strong>
-                    {new Date(fb.checkInDate).toLocaleDateString()}
+                    {fb.checkInDate ? new Date(fb.checkInDate).toLocaleDateString("en-GB") : "N/A"}
                   </strong>
                 </p>
 
-                {/* Rating */}
                 <div className="mb-2">{renderStars(fb.rating)}</div>
 
-                {/* Comment */}
                 <Card.Text className="text-secondary small flex-grow-1">
                   <i className="bi bi-chat-quote text-primary me-2"></i>
                   {fb.comment}
@@ -111,7 +94,6 @@ const FeedbackList = () => {
         ))}
       </div>
 
-      {/* Inline Styles */}
       <style>{`
         .feedback-card {
           border-radius: 14px;
