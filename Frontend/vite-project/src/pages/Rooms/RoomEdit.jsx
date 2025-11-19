@@ -166,7 +166,7 @@ const RoomEdit = () => {
 
                             <Col md={4}>
                                 <Form.Group controlId="pricePerNight">
-                                    <Form.Label>Price per Night (₹)</Form.Label>
+                                    <Form.Label>Price per Night ($)</Form.Label>
                                     <Form.Control
                                         type="number"
                                         name="pricePerNight"

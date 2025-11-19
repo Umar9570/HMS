@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, Row, Col } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Card, Row, Col, Spinner } from "react-bootstrap";
 import {
   BarChart,
   Bar,
@@ -9,27 +9,124 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import api from "../../api/axios";
 
 const AdminDashboard = () => {
-  // Demo data for charts
-  const revenueData = [
-    { month: "Jan", revenue: 12000 },
-    { month: "Feb", revenue: 15000 },
-    { month: "Mar", revenue: 18000 },
-    { month: "Apr", revenue: 14000 },
-    { month: "May", revenue: 20000 },
-    { month: "Jun", revenue: 17000 },
-  ];
+  const [stats, setStats] = useState({
+    totalBookings: 0,
+    activeGuests: 0,
+    monthlyRevenue: 0,
+    staffOnDuty: 0,
+  });
+
+  const [revenueData, setRevenueData] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // 1️⃣ Fetch all bookings and populate roomId
+        const { data: bookingsData } = await api.get("/bookings");
+        const bookings = (bookingsData || []).map((b) => ({
+          ...b,
+          roomNumber: b.roomId?.roomNumber || "N/A",
+          totalAmount: b.totalPrice || 0,
+        }));
+
+        // 2️⃣ Fetch all complaints
+        const { data: complaintsData } = await api.get("/complaints");
+        const complaints = complaintsData.complaints || [];
+
+        // 3️⃣ Fetch all cleaning requests and populate roomId
+        const { data: cleaningData } = await api.get("/cleaning");
+        const cleanings = (cleaningData.requests || []).map((c) => ({
+          ...c,
+          roomNumber: c.roomId?.roomNumber || "N/A",
+        }));
+
+        // 4️⃣ Fetch all users
+        const { data: usersData } = await api.get("/auth/users");
+        const users = usersData || [];
+        const activeGuests = users.filter(
+          (u) => u.role === "guest" && u.status === "active"
+        ).length;
+        const { data: staffData } = await api.get("/auth/staff");
+        const staff = staffData || [];
+        const staffOnDuty = staff.filter(
+          (u) => u.role !== "guest" && u.status === "active"
+        ).length-1;
+
+        // 5️⃣ Compute monthly revenue (exclude canceled bookings)
+        const revenueByMonth = {};
+        bookings.forEach((booking) => {
+          if (booking.status !== "cancelled") {
+            const month = new Date(booking.checkInDate).toLocaleString("default", {
+              month: "short",
+            });
+            revenueByMonth[month] = (revenueByMonth[month] || 0) + booking.totalAmount;
+          }
+        });
+        const revenueChartData = Object.entries(revenueByMonth).map(
+          ([month, revenue]) => ({ month, revenue })
+        );
+
+        // 6️⃣ Generate recent activity
+        const recent = [
+          ...bookings
+            .slice(-3)
+            .map((b) => `🧾 New booking created for Room ${b.roomNumber}`),
+          ...complaints
+            .slice(-2)
+            .map(
+              (c) =>
+                `⚠️ Complaint submitted by ${c.userId?.firstName || c.name || "Unknown"
+                }`
+            ),
+          ...cleanings
+            .slice(-2)
+            .map((c) => `🧹 Cleaning requested for Room ${c.roomNumber}`),
+        ];
+
+        // 7️⃣ Set state
+        setStats({
+          totalBookings: bookings.length,
+          activeGuests,
+          monthlyRevenue: bookings
+            .filter((b) => b.status !== "cancelled")
+            .reduce((sum, b) => sum + (b.totalAmount || 0), 0),
+          staffOnDuty,
+        });
+        setRevenueData(revenueChartData);
+        setRecentActivity(recent);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <Spinner animation="border" />
+        <p className="mt-2">Loading dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-dashboard">
       {/* === TOP STATS === */}
       <Row className="g-3 mb-4">
         {[
-          { title: "Total Bookings", value: "1,245", icon: "bi-calendar-check" },
-          { title: "Active Guests", value: "312", icon: "bi-people" },
-          { title: "Monthly Revenue", value: "$45,230", icon: "bi-cash-stack" },
-          { title: "Staff On Duty", value: "28", icon: "bi-person-badge" },
+          { title: "Total Bookings", value: stats.totalBookings, icon: "bi-calendar-check" },
+          { title: "Active Guests", value: stats.activeGuests, icon: "bi-people" },
+          { title: "Monthly Revenue", value: `$${stats.monthlyRevenue.toLocaleString()}`, icon: "bi-cash-stack" },
+          { title: "Staff On Duty", value: stats.staffOnDuty, icon: "bi-person-badge" },
         ].map((item, index) => (
           <Col key={index} xs={12} sm={6} lg={3}>
             <Card className="stat-card shadow-sm border-0 h-100">
@@ -76,18 +173,13 @@ const AdminDashboard = () => {
             </Card.Header>
             <Card.Body className="p-0">
               <ul className="list-group list-group-flush">
-                <li className="list-group-item small">
-                  🧾 New booking created for Room 305
-                </li>
-                <li className="list-group-item small">
-                  💰 Payment of $450 received from John Doe
-                </li>
-                <li className="list-group-item small">
-                  🧹 Housekeeping assigned to Room 210
-                </li>
-                <li className="list-group-item small">
-                  🛎️ Manager approved refund for guest #1224
-                </li>
+                {recentActivity.length ? (
+                  recentActivity.map((item, index) => (
+                    <li key={index} className="list-group-item small">{item}</li>
+                  ))
+                ) : (
+                  <li className="list-group-item small text-muted">No recent activity</li>
+                )}
               </ul>
             </Card.Body>
           </Card>

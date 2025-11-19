@@ -8,7 +8,7 @@ router.get("/", ComplaintController.getAllComplaints);
 // UPDATE complaint status
 router.put("/:id/status", ComplaintController.updateStatus);
 
-// POST a new complaint (optional)
+// POST a new complaint
 router.post("/", ComplaintController.createComplaint);
 
 module.exports = router;

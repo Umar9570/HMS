@@ -285,6 +285,19 @@ const Sidebar = ({ showMenu, toggleMenu }) => {
                             Complaints
                         </Link>
                     </li>
+                    <li className="nav-item mb-1">
+                        <Link
+                            to="/add-complaint"
+                            className={`nav-link d-flex align-items-center px-3 py-2 rounded ${location.pathname === "/add-complaint"
+                                ? "active-link bg-light fw-semibold"
+                                : "text-secondary"
+                                }`}
+                            onClick={() => isMobile && handleToggle()}
+                        >
+                            <i className="bi bi-plus-square me-2 nav-icon"></i>
+                            Add Complaint
+                        </Link>
+                    </li>
                     
 
                     {/* === SETTINGS & SYSTEM === */}

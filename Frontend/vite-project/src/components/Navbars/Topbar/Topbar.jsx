@@ -1,10 +1,13 @@
 // src/components/navbars/topbar/Topbar.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { FaBell, FaUserCircle, FaBars } from "react-icons/fa";
+import { AuthContext } from "../../../context/AuthContext";
 
 const Topbar = ({ toggleSidebar, user }) => {
+  const { logout } = useContext(AuthContext);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
@@ -30,7 +33,6 @@ const Topbar = ({ toggleSidebar, user }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showNotifications, showProfileMenu]);
-
   return (
     <nav
       className="navbar navbar-expand bg-white border-bottom shadow-sm px-3 py-2 sticky-top"
@@ -171,7 +173,7 @@ const Topbar = ({ toggleSidebar, user }) => {
                 <hr className="dropdown-divider my-1" />
               </li>
               <li>
-                <button className="dropdown-item text-danger py-2">
+                <button className="dropdown-item text-danger py-2" onClick={logout}>
                   Logout
                 </button>
               </li>

@@ -22,6 +22,7 @@ import Rooms from "../pages/ClientSide/Rooms";
 import About from "../pages/ClientSide/About";
 import Contact from "../pages/ClientSide/Contact";
 import RoomEdit from "../pages/Rooms/RoomEdit";
+import AddComplaint from "../pages/Complaint/AddComplaint";
 
 const AppRoutes = () => (
   <Routes>
@@ -101,6 +102,11 @@ const AppRoutes = () => (
       <Route path="complaints" element={
           <ProtectedRoute roles={["admin", "manager", "receptionist"]}>
             <ComplaintList />
+          </ProtectedRoute>
+        } />
+      <Route path="add-complaint" element={
+          <ProtectedRoute roles={["admin", "manager", "receptionist", "housekeeping"]}>
+            <AddComplaint />
           </ProtectedRoute>
         } />
       <Route path="cleaning-requests" element={
